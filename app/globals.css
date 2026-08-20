@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ink tokens */
+  --ink-900: #100E0C;
+  --ink-850: #15110D;
+  --ink-800: #1A1613;
+  --ink-750: #221C17;
+  --ink-700: #2B241D;
+  
+  /* line tokens */
+  --line-600: #383027;
+  --line-500: #4A4034;
+  
+  /* bone tokens */
+  --bone-100: #F4EDE1;
+  --bone-300: #D6CBB8;
+  --bone-500: #A2937C;
+  --bone-700: #6E6353;
+  
+  /* signals */
+  --ember-600: #C23F10;
+  --ember-500: #E8531C;
+  --ember-400: #F26A2E;
+  --ember-tint: #2A150C;
+  
+  --marigold-400: #E7A13A;
+  --marigold-tint: #241B0D;
+  
+  --patina-600: #2E6E62;
+  --patina-500: #3E8C7E;
+  --patina-400: #4FA695;
+  --patina-tint: #0F211E;
+  
+  --steel-400: #6E8CA0;
+}
+
+body {
+  background-color: var(--ink-900);
+  color: var(--bone-100);
+  font-family: var(--font-hanken), "Hanken Grotesk", sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tabular figures for all mono numbers per design.md */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom hairline borders */
+.hairline {
+  border-width: 1px;
+  border-color: var(--line-600);
+}
+
+.hairline-b {
+  border-bottom-width: 1px;
+  border-color: var(--line-600);
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ink-900);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--line-500);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bone-700);
+}
