@@ -216,8 +216,8 @@ export default function DashboardPage() {
         isTriggering={isSimulating}
       />
 
-      {/* Main App Body */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 flex flex-col gap-6">
+      {/* Main App Body - Strict 1200px max-width container with responsive padding */}
+      <main className="flex-1 max-w-[1200px] w-full mx-auto px-4 sm:px-6 md:px-8 py-6 flex flex-col gap-6">
         {/* 1. Deployment Diff Strip */}
         <DeploymentStrip
           deployments={deploymentsList}
@@ -225,8 +225,8 @@ export default function DashboardPage() {
           onSelectDeployment={(num) => setActiveDeployNumber(num)}
         />
 
-        {/* 2. Hero Gauges Section (Dual Lenses) */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        {/* 2. Hero Dual Gauges (Search Lens & AI-Answer Lens) - Stacks on mobile, splits on md/lg */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
           <Gauge
             value={currentScenario.scores.searchHealth}
             title="Search Crawler Health"
@@ -241,11 +241,11 @@ export default function DashboardPage() {
           />
         </section>
 
-        {/* 3. Operational Grid (Findings + GEO Citation Meter + PR Remediation) */}
+        {/* 3. Operational Grid (Findings 7 Cols + GEO Citation Meter & PR Remediation 5 Cols) */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left Column: Finding Cards & Deterministic Attributions (7 Cols) */}
+          {/* Left Column: Finding Cards & Deterministic Attributions (7 Cols on lg) */}
           <div className="lg:col-span-7 flex flex-col gap-4">
-            <div className="flex items-center justify-between border-b border-line-600 pb-2">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line-600 pb-2">
               <span className="font-mono text-xs font-bold text-bone-100 uppercase tracking-wider">
                 Deterministic Regression Findings ({currentScenario.findings.length})
               </span>
@@ -255,7 +255,7 @@ export default function DashboardPage() {
             </div>
 
             {currentScenario.findings.length === 0 ? (
-              <div className="bg-ink-800 border border-line-600 rounded-md p-8 text-center flex flex-col items-center justify-center gap-3">
+              <div className="bg-ink-800 border border-line-600 rounded-md p-6 sm:p-8 text-center flex flex-col items-center justify-center gap-3">
                 <ShieldCheck className="w-8 h-8 text-patina-400" />
                 <div className="flex flex-col">
                   <h4 className="font-ui text-base font-semibold text-bone-100">
@@ -278,7 +278,7 @@ export default function DashboardPage() {
             )}
           </div>
 
-          {/* Right Column: GEO Citation-Probability Meter & PR Card (5 Cols) */}
+          {/* Right Column: GEO Citation-Probability Meter & PR Card (5 Cols on lg) */}
           <div className="lg:col-span-5 flex flex-col gap-5">
             {/* The Wedge: Live Citation Meter */}
             <CitationMeter
@@ -332,7 +332,7 @@ export default function DashboardPage() {
 
       {/* Weathered-metal footer */}
       <footer className="w-full bg-ink-850 border-t border-line-600 py-4 mt-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-bone-500">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-bone-500 text-center sm:text-left">
           <div className="flex items-center gap-2">
             <span>SearchOps CI/CD</span>
             <span className="text-line-500">·</span>
@@ -340,7 +340,7 @@ export default function DashboardPage() {
           </div>
 
           <div>
-            Powered by <span className="text-bone-300">OpenRouter Multi-Model Failover Chain</span> (Llama 3.3 70B · Gemini 2.0 Flash · Qwen 2.5 72B)
+            Powered by <span className="text-bone-300">OpenRouter Multi-Model Failover Chain</span>
           </div>
         </div>
       </footer>

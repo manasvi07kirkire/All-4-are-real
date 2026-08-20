@@ -7,7 +7,7 @@ interface GaugeProps {
   subtitle?: string;
   delta?: number;
   lensLabel: "SEARCH LENS" | "AI-ANSWER LENS";
-  size?: number; // default 200
+  size?: number; // default 220
   className?: string;
 }
 
@@ -56,7 +56,7 @@ export const Gauge: React.FC<GaugeProps> = ({
   return (
     <div
       className={clsx(
-        "relative flex flex-col items-center justify-between p-5 bg-ink-800 border border-line-600 rounded-md transition-all duration-200",
+        "relative flex flex-col items-center justify-between p-4 sm:p-5 bg-ink-800 border border-line-600 rounded-md transition-all duration-200 w-full",
         className
       )}
       style={{
@@ -64,14 +64,14 @@ export const Gauge: React.FC<GaugeProps> = ({
       }}
     >
       {/* Header Eyebrow */}
-      <div className="w-full flex items-center justify-between border-b border-line-600/60 pb-2.5 mb-2">
-        <span className="font-mono text-[10.5px] font-semibold tracking-wider text-bone-500 uppercase">
+      <div className="w-full flex items-center justify-between border-b border-line-600/60 pb-2 mb-2">
+        <span className="font-mono text-[10.5px] font-semibold tracking-wider text-bone-500 uppercase truncate">
           {lensLabel}
         </span>
         {delta !== undefined && (
           <span
             className={clsx(
-              "font-mono text-xs font-bold px-1.5 py-0.5 rounded-sm tabular-nums border",
+              "font-mono text-xs font-bold px-1.5 py-0.5 rounded-sm tabular-nums border shrink-0",
               delta < 0
                 ? "text-ember-400 bg-ember-tint border-ember-500/30"
                 : delta > 0
@@ -84,13 +84,11 @@ export const Gauge: React.FC<GaugeProps> = ({
         )}
       </div>
 
-      {/* SVG Arc Dial */}
-      <div className="relative flex items-center justify-center my-1">
+      {/* SVG Arc Dial - Responsive scaling */}
+      <div className="relative flex items-center justify-center my-1 w-full max-w-[220px]">
         <svg
-          width={size}
-          height={size * 0.85}
-          viewBox={`0 0 ${size} ${size}`}
-          className="overflow-visible"
+          viewBox={`0 0 ${size} ${size * 0.88}`}
+          className="w-full h-auto overflow-visible"
         >
           {/* Background Track */}
           <circle
@@ -149,7 +147,7 @@ export const Gauge: React.FC<GaugeProps> = ({
 
         {/* Center Number Value & Caption */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pt-2">
-          <span className="font-mono text-5xl font-bold tracking-tight text-bone-100 tabular-nums">
+          <span className="font-mono text-4xl sm:text-5xl font-bold tracking-tight text-bone-100 tabular-nums">
             {clamped}
           </span>
           <span className="font-mono text-[10px] tracking-widest text-bone-500 uppercase mt-0.5">
@@ -159,9 +157,9 @@ export const Gauge: React.FC<GaugeProps> = ({
       </div>
 
       {/* Footer Info */}
-      <div className="w-full text-center mt-1 border-t border-line-600/40 pt-2.5">
-        <h4 className="font-ui text-sm font-semibold text-bone-100">{title}</h4>
-        <p className={clsx("font-mono text-[11px] uppercase tracking-wider font-medium mt-0.5", textColor)}>
+      <div className="w-full text-center mt-1 border-t border-line-600/40 pt-2">
+        <h4 className="font-ui text-sm font-semibold text-bone-100 truncate">{title}</h4>
+        <p className={clsx("font-mono text-[10.5px] sm:text-[11px] uppercase tracking-wider font-medium mt-0.5", textColor)}>
           {statusText}
         </p>
       </div>
