@@ -339,8 +339,8 @@ export default function DashboardPage() {
             <span>Deterministic Attribution Engine v1.0</span>
           </div>
 
-          <div>
-            Powered by <span className="text-bone-300">OpenRouter Multi-Model Failover Chain</span>
+          <div className="text-bone-500">
+            Precision Discoverability Monitoring · Dual Lenses
           </div>
         </div>
       </footer>
