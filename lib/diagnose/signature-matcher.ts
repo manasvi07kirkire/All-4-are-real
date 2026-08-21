@@ -32,27 +32,24 @@ export function diagnoseRootCause(
 
     // 1. Signature for CANONICAL_STRIPPED: Removal of canonical link tag or metadata canonical generator
     if (finding.type === "CANONICAL_STRIPPED") {
-      let currentLineNum = 1;
+      let origLineNum = 1;
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
-        const lineMatch = line.match(/^@@ -\d+,?\d* \+(\d+),?\d* @@/);
+        const lineMatch = line.match(/^@@ -(\d+),?\d* \+(\d+),?\d* @@/);
         if (lineMatch) {
-          currentLineNum = parseInt(lineMatch[1], 10);
+          origLineNum = parseInt(lineMatch[1], 10);
           continue;
         }
 
-        // Deleted line that had canonical or metadata alternates
+        // Deleted line specifically mentioning canonical
         if (
           line.startsWith("-") &&
-          (line.includes("canonical") ||
-            line.includes("alternates:") ||
-            line.includes("rel=\"canonical\"") ||
-            line.includes("generateMetadata"))
+          (line.includes("canonical") || line.includes("rel=\"canonical\""))
         ) {
           return {
             file: file.filename,
-            line: Math.max(1, currentLineNum + i),
+            line: origLineNum,
             component: "ProductMetadata",
             confidence: 96,
             matchedSignature: "CANONICAL_TAG_REMOVAL_SIG",
@@ -60,20 +57,20 @@ export function diagnoseRootCause(
           };
         }
 
-        if (!line.startsWith("-")) {
-          currentLineNum++;
+        if (!line.startsWith("+")) {
+          origLineNum++;
         }
       }
     }
 
     // 2. Signature for NOINDEX_FLIPPED: Adding robots: { index: false } or meta noindex
     if (finding.type === "NOINDEX_FLIPPED") {
-      let currentLineNum = 1;
+      let newLineNum = 1;
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
-        const lineMatch = line.match(/^@@ -\d+,?\d* \+(\d+),?\d* @@/);
+        const lineMatch = line.match(/^@@ -(\d+),?\d* \+(\d+),?\d* @@/);
         if (lineMatch) {
-          currentLineNum = parseInt(lineMatch[1], 10);
+          newLineNum = parseInt(lineMatch[2] || lineMatch[1], 10);
           continue;
         }
 
@@ -85,7 +82,7 @@ export function diagnoseRootCause(
         ) {
           return {
             file: file.filename,
-            line: Math.max(1, currentLineNum + i),
+            line: newLineNum,
             component: "RobotsConfig",
             confidence: 100,
             matchedSignature: "ROBOTS_NOINDEX_INJECTION_SIG",
@@ -94,19 +91,19 @@ export function diagnoseRootCause(
         }
 
         if (!line.startsWith("-")) {
-          currentLineNum++;
+          newLineNum++;
         }
       }
     }
 
     // 3. Signature for SCHEMA_REMOVED: Removal of ld+json script tag or Schema component
     if (finding.type === "SCHEMA_REMOVED") {
-      let currentLineNum = 1;
+      let origLineNum = 1;
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
-        const lineMatch = line.match(/^@@ -\d+,?\d* \+(\d+),?\d* @@/);
+        const lineMatch = line.match(/^@@ -(\d+),?\d* \+(\d+),?\d* @@/);
         if (lineMatch) {
-          currentLineNum = parseInt(lineMatch[1], 10);
+          origLineNum = parseInt(lineMatch[1], 10);
           continue;
         }
 
@@ -119,7 +116,7 @@ export function diagnoseRootCause(
         ) {
           return {
             file: file.filename,
-            line: Math.max(1, currentLineNum + i),
+            line: origLineNum,
             component: "BlogJsonLd",
             confidence: 94,
             matchedSignature: "JSONLD_SCHEMA_STRIP_SIG",
@@ -127,8 +124,8 @@ export function diagnoseRootCause(
           };
         }
 
-        if (!line.startsWith("-")) {
-          currentLineNum++;
+        if (!line.startsWith("+")) {
+          origLineNum++;
         }
       }
     }
