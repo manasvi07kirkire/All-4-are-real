@@ -16,21 +16,29 @@ export const StatusDot: React.FC<StatusDotProps> = ({
   size = "md",
   className,
 }) => {
-  const isHealthy = status === "PASS" || status === "HEALTHY" || status === "REMEDIATED";
+  const isHealthy = status === "PASS" || status === "HEALTHY";
+  const isRemediated = status === "REMEDIATED";
   const isDegraded = status === "DEGRADED";
   const isRegression = status === "REGRESSION";
 
-  // Shape symbol according to design.md §5.2 (color-blind safe)
-  let symbol = "●";
+  // Shape symbol according to design system:
+  // ● filled circle -> regression (ember)
+  // ■ filled square -> healthy (patina)
+  // ◆ diamond -> remediated (patina)
+  // ▲ triangle -> degraded (marigold)
+  let symbol = "■";
   let textLabel = label || status;
-  let colorClasses = "text-patina-400 border-patina-500/30 bg-patina-tint";
+  let colorClasses = "text-patina-400 border-patina-600/40 bg-patina-tint";
 
-  if (isDegraded) {
+  if (isRegression) {
+    symbol = "●";
+    colorClasses = "text-ember-400 border-ember-600/40 bg-ember-tint";
+  } else if (isDegraded) {
     symbol = "▲";
     colorClasses = "text-marigold-400 border-marigold-400/30 bg-marigold-tint";
-  } else if (isRegression) {
-    symbol = "■";
-    colorClasses = "text-ember-400 border-ember-500/30 bg-ember-tint";
+  } else if (isRemediated) {
+    symbol = "◆";
+    colorClasses = "text-patina-400 border-patina-600/40 bg-patina-tint";
   }
 
   const sizeClasses = {

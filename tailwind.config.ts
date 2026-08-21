@@ -11,22 +11,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        ink: {
-          900: "#100E0C",
-          850: "#15110D",
-          800: "#1A1613",
-          750: "#221C17",
-          700: "#2B241D",
-        },
-        line: {
-          600: "#383027",
-          500: "#4A4034",
-        },
         bone: {
           100: "#F4EDE1",
           300: "#D6CBB8",
           500: "#A2937C",
           700: "#6E6353",
+        },
+        ink: {
+          900: "#100E0C",
+          850: "#15110D",
+          800: "#1A1613",
+          700: "#2B241D",
         },
         ember: {
           600: "#C23F10",
@@ -47,28 +42,28 @@ const config: Config = {
         steel: {
           400: "#6E8CA0",
         },
-        paper: {
-          50: "#F6F0E6",
-          100: "#EDE4D5",
-          200: "#E0D4C0",
+        darkSurface: {
+          DEFAULT: "#1A1613",
+          code: "#1e1e1e",
+          panel: "#1d100c",
+          sub: "#2b1c18",
         },
-        espresso: {
-          900: "#1B1510",
-          700: "#453A2E",
-        },
-      },
-      borderRadius: {
-        sm: "3px",
-        md: "5px",
-        lg: "8px",
       },
       fontFamily: {
-        display: ["var(--font-fraunces)", "Fraunces", "Georgia", "serif"],
-        ui: ["var(--font-hanken)", "Hanken Grotesk", "Carlito", "sans-serif"],
-        mono: ["var(--font-mono)", "Commit Mono", "JetBrains Mono", "monospace"],
+        display: ["'JetBrains Mono'", "monospace"],
+        sans: ["'Hanken Grotesk'", "sans-serif"],
+        body: ["'Hanken Grotesk'", "sans-serif"],
+        mono: ["'JetBrains Mono'", "monospace"],
+      },
+      borderRadius: {
+        DEFAULT: "2px",
+        sm: "2px",
+        md: "4px",
+        lg: "4px",
+        xl: "8px",
       },
       boxShadow: {
-        cta: "0 0 0 1px #C23F10, 0 6px 20px rgba(232,83,28,0.22)",
+        cta: "0 2px 12px rgba(194, 63, 16, 0.35)",
       },
     },
   },

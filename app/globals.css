@@ -2,45 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* ink tokens */
-  --ink-900: #100E0C;
-  --ink-850: #15110D;
-  --ink-800: #1A1613;
-  --ink-750: #221C17;
-  --ink-700: #2B241D;
-  
-  /* line tokens */
-  --line-600: #383027;
-  --line-500: #4A4034;
-  
-  /* bone tokens */
-  --bone-100: #F4EDE1;
-  --bone-300: #D6CBB8;
-  --bone-500: #A2937C;
-  --bone-700: #6E6353;
-  
-  /* signals */
-  --ember-600: #C23F10;
-  --ember-500: #E8531C;
-  --ember-400: #F26A2E;
-  --ember-tint: #2A150C;
-  
-  --marigold-400: #E7A13A;
-  --marigold-tint: #241B0D;
-  
-  --patina-600: #2E6E62;
-  --patina-500: #3E8C7E;
-  --patina-400: #4FA695;
-  --patina-tint: #0F211E;
-  
-  --steel-400: #6E8CA0;
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background-color: var(--ink-900);
-  color: var(--bone-100);
-  font-family: var(--font-hanken), "Hanken Grotesk", sans-serif;
+  background-color: #F4EDE1;
+  color: #100E0C;
+  font-family: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   min-height: 100vh;
   margin: 0;
   padding: 0;
@@ -48,23 +17,46 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Tabular figures for all mono numbers per design.md */
+/* Enforce tabular numerals on all monospace and numeric data elements */
+.font-mono,
+code,
+pre,
 .tabular-nums {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-variant-numeric: tabular-nums;
 }
 
-/* Custom hairline borders */
-.hairline {
-  border-width: 1px;
-  border-color: var(--line-600);
+/* Field Manual Animations */
+@keyframes pulse-border {
+  0%, 100% { border-color: rgba(194, 63, 16, 0.4); }
+  50% { border-color: rgba(194, 63, 16, 1); }
 }
 
-.hairline-b {
-  border-bottom-width: 1px;
-  border-color: var(--line-600);
+@keyframes pulse-node {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
 }
 
-/* Hide scrollbar utility */
+@keyframes flow-line {
+  0% { stroke-dashoffset: 24; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.pulse-error-border {
+  animation: pulse-border 2s infinite ease-in-out;
+}
+
+.node-active {
+  animation: pulse-node 2s infinite ease-in-out;
+  transform-origin: center;
+}
+
+.line-active {
+  stroke-dasharray: 4;
+  animation: flow-line 1s linear infinite;
+}
+
+/* Hide scrollbar helper */
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -73,21 +65,21 @@ body {
   display: none;
 }
 
-/* Custom scrollbars */
+/* Field Manual Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--ink-900);
+  background: #F4EDE1;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--line-500);
-  border-radius: 3px;
+  background: #D6CBB8;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--bone-700);
+  background: #A2937C;
 }

@@ -22,30 +22,30 @@ export const Gauge: React.FC<GaugeProps> = ({
 }) => {
   const clamped = Math.max(0, Math.min(100, value));
 
-  // Determine color bound to value per design.md §5.1 / §7
-  let strokeColor = "#3E8C7E"; // patina-500
-  let glowColor = "rgba(62, 140, 126, 0.15)";
+  // Score threshold mapping per design system:
+  // score >= 85  → patina-400
+  // score 60–84  → marigold-400
+  // score < 60   → ember-400
+  let strokeColor = "#4FA695"; // patina-400
   let textColor = "text-patina-400";
   let statusText = "PASS · OPTIMIZED";
 
   if (clamped < 60) {
-    strokeColor = "#E8531C"; // ember-500
-    glowColor = "rgba(232, 83, 28, 0.2)";
+    strokeColor = "#F26A2E"; // ember-400
     textColor = "text-ember-400";
     statusText = "REGRESSION DETECTED";
   } else if (clamped < 85) {
     strokeColor = "#E7A13A"; // marigold-400
-    glowColor = "rgba(231, 161, 58, 0.15)";
     textColor = "text-marigold-400";
     statusText = "DEGRADED · AT RISK";
   }
 
-  // 240 degree arc calculation
+  // 270 degree arc calculation
   const strokeWidth = 10;
   const radius = (size - strokeWidth * 2) / 2;
   const center = size / 2;
-  const arcDegrees = 240;
-  const startAngle = 150; // top-left
+  const arcDegrees = 270;
+  const startAngle = 135; // top-left
   const totalCircumference = 2 * Math.PI * radius;
   const arcLength = (arcDegrees / 360) * totalCircumference;
   const dashOffset = arcLength - (clamped / 100) * arcLength;
@@ -56,27 +56,24 @@ export const Gauge: React.FC<GaugeProps> = ({
   return (
     <div
       className={clsx(
-        "relative flex flex-col items-center justify-between p-4 sm:p-5 bg-ink-800 border border-line-600 rounded-md transition-all duration-200 w-full",
+        "relative flex flex-col items-center justify-between p-4 sm:p-5 bg-ink-800 border border-ink-700 rounded-sm transition-all duration-200 w-full",
         className
       )}
-      style={{
-        boxShadow: clamped < 60 ? "inset 0 0 24px rgba(232, 83, 28, 0.05)" : undefined,
-      }}
     >
       {/* Header Eyebrow */}
-      <div className="w-full flex items-center justify-between border-b border-line-600/60 pb-2 mb-2">
-        <span className="font-mono text-[10.5px] font-semibold tracking-wider text-bone-500 uppercase truncate">
+      <div className="w-full flex items-center justify-between border-b border-ink-700 pb-2 mb-2">
+        <span className="font-mono text-[11px] font-bold tracking-wider text-bone-500 uppercase truncate">
           {lensLabel}
         </span>
         {delta !== undefined && (
           <span
             className={clsx(
-              "font-mono text-xs font-bold px-1.5 py-0.5 rounded-sm tabular-nums border shrink-0",
+              "font-mono text-xs font-bold px-2 py-0.5 rounded-sm tabular-nums border shrink-0",
               delta < 0
-                ? "text-ember-400 bg-ember-tint border-ember-500/30"
+                ? "text-ember-400 bg-ember-tint border-ember-600/40"
                 : delta > 0
-                ? "text-patina-400 bg-patina-tint border-patina-500/30"
-                : "text-bone-500 bg-ink-850 border-line-600"
+                ? "text-patina-400 bg-patina-tint border-patina-600/40"
+                : "text-bone-500 bg-ink-850 border-ink-700"
             )}
           >
             {delta > 0 ? `+${delta}` : delta}
@@ -96,7 +93,7 @@ export const Gauge: React.FC<GaugeProps> = ({
             cy={center}
             r={radius}
             fill="none"
-            stroke="#221C17"
+            stroke="#15110D"
             strokeWidth={strokeWidth}
             strokeDasharray={`${arcLength} ${totalCircumference}`}
             strokeLinecap="round"
@@ -138,7 +135,7 @@ export const Gauge: React.FC<GaugeProps> = ({
                 y1={y1}
                 x2={x2}
                 y2={y2}
-                stroke="#4A4034"
+                stroke="#383027"
                 strokeWidth={t === 0 || t === 100 ? 1.5 : 1}
               />
             );
@@ -147,7 +144,7 @@ export const Gauge: React.FC<GaugeProps> = ({
 
         {/* Center Number Value & Caption */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pt-2">
-          <span className="font-mono text-4xl sm:text-5xl font-bold tracking-tight text-bone-100 tabular-nums">
+          <span className="font-display font-light text-5xl tracking-tight text-bone-100 tabular-nums">
             {clamped}
           </span>
           <span className="font-mono text-[10px] tracking-widest text-bone-500 uppercase mt-0.5">
@@ -157,9 +154,9 @@ export const Gauge: React.FC<GaugeProps> = ({
       </div>
 
       {/* Footer Info */}
-      <div className="w-full text-center mt-1 border-t border-line-600/40 pt-2">
-        <h4 className="font-ui text-sm font-semibold text-bone-100 truncate">{title}</h4>
-        <p className={clsx("font-mono text-[10.5px] sm:text-[11px] uppercase tracking-wider font-medium mt-0.5", textColor)}>
+      <div className="w-full text-center mt-1 border-t border-ink-700 pt-2">
+        <h4 className="font-sans font-medium text-sm text-bone-100 truncate">{title}</h4>
+        <p className={clsx("font-mono text-[11px] uppercase tracking-wider font-bold mt-0.5", textColor)}>
           {statusText}
         </p>
       </div>

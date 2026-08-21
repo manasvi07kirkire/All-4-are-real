@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import clsx from "clsx";
-import { CheckCircle2, XCircle, Sparkles, RefreshCw, Cpu, BookOpen } from "lucide-react";
+import { CheckCircle2, XCircle, RefreshCw, Cpu, BookOpen } from "lucide-react";
 import { GroundedFactCheck } from "@/lib/geo/citation-test";
 
 interface CitationMeterProps {
@@ -34,41 +34,40 @@ export const CitationMeter: React.FC<CitationMeterProps> = ({
   onReRunTest,
   isLoading = false,
 }) => {
-  // 5 discrete segments
   const totalSegments = 5;
 
-  let meterColor = "bg-patina-400 border-patina-500";
+  let meterColor = "bg-patina-400 border-patina-400/40";
   let textColor = "text-patina-400";
   let statusText = "HIGHLY CITATION-READY";
 
   if (score <= 2) {
-    meterColor = "bg-ember-500 border-ember-600";
+    meterColor = "bg-ember-400 border-ember-400/40";
     textColor = "text-ember-400";
     statusText = "CITATION FAILURE · ENTITIES STRIPPED";
   } else if (score <= 4) {
-    meterColor = "bg-marigold-400 border-marigold-500";
+    meterColor = "bg-marigold-400 border-marigold-400/40";
     textColor = "text-marigold-400";
     statusText = "PARTIALLY GROUNDED · AT RISK";
   }
 
   return (
-    <div className="bg-ink-800 border border-line-600 rounded-md p-4 sm:p-5 flex flex-col gap-4">
-      {/* Header - Stacks on mobile, inline on sm */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-line-600 pb-3">
+    <div className="bg-ink-800 border border-ink-700 rounded-sm p-4 sm:p-5 flex flex-col gap-4">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-ink-700 pb-3">
         <div className="flex items-center gap-2 flex-wrap">
           <BookOpen className="w-4 h-4 text-steel-400 shrink-0" />
           <span className="font-mono text-xs font-bold uppercase tracking-wider text-bone-100">
-            GEO Citation-Probability Meter
+            GEO CITATION-PROBABILITY METER
           </span>
-          <span className="font-mono text-[10px] text-bone-500 bg-ink-850 px-2 py-0.5 border border-line-600 rounded-sm shrink-0">
+          <span className="font-mono text-[10px] text-bone-500 bg-ink-850 px-2 py-0.5 border border-ink-700 rounded-sm shrink-0">
             THE WEDGE
           </span>
         </div>
 
         <div className="flex items-center gap-2 justify-between sm:justify-end">
-          <div className="flex items-center gap-1.5 truncate">
-            <span className="font-mono text-xs text-bone-500">Page:</span>
-            <code className="font-mono text-xs text-bone-300 bg-ink-850 px-2 py-0.5 rounded-sm border border-line-600 truncate max-w-[140px] sm:max-w-[200px]">
+          <div className="flex items-center gap-1.5 truncate font-mono text-xs">
+            <span className="text-bone-500">Page:</span>
+            <code className="text-bone-300 bg-ink-850 px-2 py-0.5 rounded-sm border border-ink-700 truncate max-w-[140px] sm:max-w-[180px]">
               {url}
             </code>
           </div>
@@ -76,9 +75,9 @@ export const CitationMeter: React.FC<CitationMeterProps> = ({
             <button
               onClick={onReRunTest}
               disabled={isLoading}
-              className="flex items-center gap-1.5 px-2.5 py-1 bg-ink-750 hover:bg-ink-700 border border-line-500 text-bone-300 hover:text-bone-100 rounded-sm text-xs font-mono transition-all disabled:opacity-50 shrink-0"
+              className="flex items-center gap-1.5 px-2.5 py-1 bg-transparent hover:bg-ink-750 border border-ink-700 text-bone-300 hover:text-bone-100 rounded-sm text-xs font-mono uppercase tracking-wider transition-all disabled:opacity-50 shrink-0 h-7"
             >
-              <RefreshCw className={clsx("w-3 h-3", isLoading && "animate-spin text-ember-400")} />
+              <RefreshCw className={clsx("w-3 h-3 text-steel-400", isLoading && "animate-spin text-ember-400")} />
               <span>{isLoading ? "TESTING..." : "LIVE TEST"}</span>
             </button>
           )}
@@ -88,21 +87,21 @@ export const CitationMeter: React.FC<CitationMeterProps> = ({
       {/* 5-Segment Bar */}
       <div className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center justify-between gap-1">
-          <div className="flex items-center gap-1.5">
-            <span className="font-mono text-2xl font-bold text-bone-100 tabular-nums">
+          <div className="flex items-center gap-1.5 font-mono">
+            <span className="text-2xl font-bold text-bone-100 tabular-nums">
               {score} / 5
             </span>
-            <span className="font-mono text-xs text-bone-500">
+            <span className="text-xs text-bone-500 tabular-nums">
               ({Math.round((score / 5) * 100)}% grounded)
             </span>
           </div>
-          <span className={clsx("font-mono text-[11px] sm:text-xs font-semibold uppercase tracking-wider", textColor)}>
+          <span className={clsx("font-mono text-[11px] sm:text-xs font-bold uppercase tracking-wider", textColor)}>
             {statusText}
           </span>
         </div>
 
-        {/* Discrete Segments */}
-        <div className="grid grid-cols-5 gap-1.5 sm:gap-2 h-5">
+        {/* Discrete 4px Segments */}
+        <div className="grid grid-cols-5 gap-1.5 sm:gap-2 h-2">
           {Array.from({ length: totalSegments }).map((_, idx) => {
             const isFilled = idx < score;
             return (
@@ -111,8 +110,8 @@ export const CitationMeter: React.FC<CitationMeterProps> = ({
                 className={clsx(
                   "h-full rounded-sm border transition-all duration-300",
                   isFilled
-                    ? `${meterColor} shadow-[0_0_8px_rgba(62,140,126,0.2)]`
-                    : "bg-ink-850 border-line-600"
+                    ? `${meterColor}`
+                    : "bg-ink-700 border-ink-700 opacity-60"
                 )}
               />
             );
@@ -123,13 +122,13 @@ export const CitationMeter: React.FC<CitationMeterProps> = ({
       {/* Query & Grounded Facts Checklist */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
         {/* Expected Grounding Entities */}
-        <div className="flex flex-col gap-2 bg-ink-850 p-3 rounded-sm border border-line-600">
-          <span className="font-mono text-[10.5px] font-semibold text-bone-500 uppercase tracking-wider">
+        <div className="flex flex-col gap-2 bg-ink-850 p-3 rounded-sm border border-ink-700 font-mono">
+          <span className="text-[10.5px] font-bold text-bone-500 uppercase tracking-wider">
             Target Facts / Structured Entities
           </span>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1.5 text-xs">
             {groundedFacts.map((item, idx) => (
-              <div key={idx} className="flex items-start gap-2 text-xs">
+              <div key={idx} className="flex items-start gap-2">
                 {item.isGrounded ? (
                   <CheckCircle2 className="w-3.5 h-3.5 text-patina-400 shrink-0 mt-0.5" />
                 ) : (
@@ -137,8 +136,8 @@ export const CitationMeter: React.FC<CitationMeterProps> = ({
                 )}
                 <span
                   className={clsx(
-                    "font-ui",
-                    item.isGrounded ? "text-bone-300" : "text-bone-500 line-through"
+                    "font-sans",
+                    item.isGrounded ? "text-bone-300 font-medium" : "text-bone-500 line-through"
                   )}
                 >
                   {item.fact}
@@ -149,22 +148,22 @@ export const CitationMeter: React.FC<CitationMeterProps> = ({
         </div>
 
         {/* Model Answer Transparency Panel */}
-        <div className="flex flex-col gap-2 bg-ink-850 p-3 rounded-sm border border-line-600">
+        <div className="flex flex-col gap-2 bg-ink-850 p-3 rounded-sm border border-ink-700 font-mono">
           <div className="flex items-center justify-between gap-1">
-            <span className="font-mono text-[10.5px] font-semibold text-bone-500 uppercase tracking-wider flex items-center gap-1.5">
-              <Cpu className="w-3 h-3 text-steel-400 shrink-0" />
-              <span>AI Answer Engine Output</span>
+            <span className="text-[10.5px] font-bold text-bone-500 uppercase tracking-wider flex items-center gap-1.5">
+              <Cpu className="w-3.5 h-3.5 text-steel-400 shrink-0" />
+              <span>AI Answer Output</span>
             </span>
-            <span className="font-mono text-[10px] text-bone-500 truncate max-w-[130px]">
+            <span className="text-[10px] text-bone-500 truncate max-w-[130px]">
               {modelUsed.split("/")[1] || modelUsed}
             </span>
           </div>
 
-          <p className="font-mono text-xs text-bone-300 leading-relaxed bg-ink-900 p-2.5 rounded-sm border border-line-600/80 italic">
+          <p className="text-xs text-bone-300 leading-relaxed bg-ink-900 p-2.5 rounded-sm border border-ink-700 italic font-mono">
             &ldquo;{modelAnswer}&rdquo;
           </p>
 
-          <span className="font-mono text-[10px] text-bone-500 text-right truncate">
+          <span className="text-[10px] text-bone-500 text-right truncate">
             Query: &ldquo;{query.slice(0, 35)}...&rdquo;
           </span>
         </div>

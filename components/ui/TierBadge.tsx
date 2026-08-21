@@ -30,25 +30,23 @@ export const TierBadge: React.FC<TierBadgeProps> = ({
             : "Requires manual human approval",
       };
 
-  // Symbols: ● patina (Auto-fix), ▲ marigold (Draft PR), ■ ember (Approval)
-  const symbol =
-    classification.colorToken === "patina"
-      ? "●"
-      : classification.colorToken === "marigold"
-      ? "▲"
-      : "■";
+  const isPatina = classification.colorToken === "patina";
+  const isMarigold = classification.colorToken === "marigold";
 
-  const colorStyles = {
-    patina: "text-patina-400 bg-patina-tint border-patina-500/30",
-    marigold: "text-marigold-400 bg-marigold-tint border-marigold-400/30",
-    ember: "text-ember-400 bg-ember-tint border-ember-500/30",
-  }[classification.colorToken];
+  // Symbols: ● patina (Auto-fix), ▲ marigold (Draft PR), ■ ember (Approval)
+  const symbol = isPatina ? "●" : isMarigold ? "▲" : "■";
+
+  const colorStyles = isPatina
+    ? "text-patina-400 bg-patina-tint border-patina-400/40"
+    : isMarigold
+    ? "text-marigold-400 bg-marigold-tint border-marigold-400/40"
+    : "text-ember-400 bg-ember-tint border-ember-400/40";
 
   return (
     <div className={clsx("inline-flex flex-col items-start gap-1", className)}>
       <span
         className={clsx(
-          "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm border font-mono text-[11px] font-semibold uppercase tracking-wider",
+          "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm border font-mono text-[11px] font-bold uppercase tracking-wider",
           colorStyles
         )}
       >
@@ -58,7 +56,7 @@ export const TierBadge: React.FC<TierBadgeProps> = ({
         <span>{classification.label}</span>
       </span>
       {showDescription && (
-        <span className="font-ui text-xs text-bone-500 max-w-xs">
+        <span className="font-sans text-xs text-bone-500 max-w-xs">
           {classification.description}
         </span>
       )}

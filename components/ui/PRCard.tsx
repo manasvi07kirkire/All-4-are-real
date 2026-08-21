@@ -1,147 +1,130 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import clsx from "clsx";
-import { GitPullRequest, Check, ShieldCheck, ArrowUpRight, Copy, ExternalLink } from "lucide-react";
-import { TierBadge } from "./TierBadge";
+import { GitPullRequest, CheckCircle2, ShieldCheck, Check } from "lucide-react";
 
 interface PRCardProps {
-  prNumber?: number;
+  prNumber: number;
   title: string;
   body: string;
   diff: string;
   targetFile: string;
-  status: "READY" | "APPLIED" | "MERGED";
+  status: "READY" | "APPLIED" | "PENDING";
   onMergeFix?: () => void;
   isMerging?: boolean;
 }
 
 export const PRCard: React.FC<PRCardProps> = ({
-  prNumber = 185,
+  prNumber,
   title,
   body,
   diff,
   targetFile,
-  status = "READY",
+  status,
   onMergeFix,
   isMerging = false,
 }) => {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopyDiff = () => {
-    navigator.clipboard.writeText(diff);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const isApplied = status === "APPLIED" || status === "MERGED";
+  const isApplied = status === "APPLIED";
 
   return (
-    <div className="bg-ink-800 border border-line-600 rounded-md p-5 flex flex-col gap-4">
-      {/* PR Header */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line-600 pb-3">
+    <div className="bg-ink-800 border border-ink-700 rounded-sm p-4 sm:p-5 flex flex-col gap-4">
+      {/* Header */}
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-ink-700 pb-3">
         <div className="flex items-center gap-2">
-          <GitPullRequest className="w-4 h-4 text-patina-400" />
-          <span className="font-mono text-xs font-bold text-bone-100 uppercase tracking-wider">
-            Autonomous Tier-A Remediation PR
+          <div className="w-6 h-6 rounded-sm bg-patina-tint text-patina-400 border border-patina-400/40 flex items-center justify-center font-mono font-bold text-xs">
+            <GitPullRequest className="w-3.5 h-3.5 text-patina-400" />
+          </div>
+          <span className="font-mono text-xs font-bold text-bone-100">
+            PR #{prNumber}
           </span>
-          <span className="font-mono text-xs font-bold text-patina-400 bg-patina-tint px-2 py-0.5 border border-patina-500/30 rounded-sm">
-            #{prNumber}
+          <span className="font-mono text-xs text-bone-500 uppercase">
+            Autonomous Tier-A Patch
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
-          <TierBadge tier="TIER_A" />
-          <span className="font-mono text-[11px] text-bone-500 bg-ink-850 px-2 py-0.5 border border-line-600 rounded-sm">
-            branch: searchops/fix-canonical-restore
-          </span>
-        </div>
+        <span
+          className={clsx(
+            "font-mono text-[11px] font-bold px-2.5 py-0.5 rounded-sm border uppercase tracking-wider",
+            isApplied
+              ? "text-patina-400 bg-patina-tint border-patina-400/40"
+              : "text-marigold-400 bg-marigold-tint border-marigold-400/40"
+          )}
+        >
+          {isApplied ? "● MERGED & DEPLOYED" : "● READY TO MERGE"}
+        </span>
       </div>
 
-      {/* Title & File Target */}
+      {/* PR Summary */}
       <div className="flex flex-col gap-1">
-        <h4 className="font-ui text-base font-semibold text-bone-100">{title}</h4>
-        <div className="flex items-center gap-2 text-xs font-mono text-bone-500">
-          <span>Target:</span>
-          <code className="text-bone-300 bg-ink-850 px-1.5 py-0.5 rounded-sm border border-line-600">
-            {targetFile}
-          </code>
+        <h4 className="font-sans font-medium text-base text-bone-100">{title}</h4>
+        <p className="font-sans text-xs text-bone-300 leading-relaxed">{body}</p>
+      </div>
+
+      {/* Diff Box */}
+      <div className="flex flex-col gap-1.5 font-mono">
+        <div className="flex items-center justify-between text-xs text-bone-500">
+          <span>Target: <strong className="text-bone-100">{targetFile}</strong></span>
+          <span className="text-[10px] text-patina-400 uppercase font-bold">Unified Git Diff</span>
+        </div>
+
+        <div className="bg-ink-900 border border-ink-700 rounded-sm p-3 font-mono text-xs overflow-x-auto">
+          <pre className="text-bone-300 leading-5">
+            {diff.split("\n").map((line, idx) => {
+              const isAdd = line.startsWith("+") && !line.startsWith("+++");
+              const isDel = line.startsWith("-") && !line.startsWith("---");
+              const isHeader = line.startsWith("@@") || line.startsWith("---") || line.startsWith("+++");
+
+              return (
+                <div
+                  key={idx}
+                  className={clsx(
+                    "px-1 rounded-sm",
+                    isAdd && "bg-patina-tint text-patina-400 font-semibold",
+                    isDel && "bg-ember-tint text-ember-400 font-semibold",
+                    isHeader && "text-bone-500 font-bold opacity-80"
+                  )}
+                >
+                  {line}
+                </div>
+              );
+            })}
+          </pre>
         </div>
       </div>
 
-      {/* Validation Gate */}
-      <div className="bg-patina-tint/50 border border-patina-500/30 rounded-sm p-3 flex flex-col gap-2">
-        <div className="flex items-center gap-1.5 text-patina-400 font-mono text-xs font-semibold uppercase tracking-wider">
-          <ShieldCheck className="w-4 h-4" />
-          <span>Automated Validation Gate Passed</span>
+      {/* 3-Step Automated Validation Gate */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono">
+        <div className="bg-ink-850 p-2.5 rounded-sm border border-ink-700 flex items-center gap-1.5">
+          <CheckCircle2 className="w-3.5 h-3.5 text-patina-400 shrink-0" />
+          <span className="truncate text-bone-300">1. AST: <strong className="text-patina-400">PASS</strong></span>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-mono text-bone-300">
-          <div className="flex items-center gap-1.5">
-            <span className="text-patina-400">✓</span> Static Syntax AST Check
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="text-patina-400">✓</span> Deterministic Rule Re-run
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="text-patina-400">✓</span> Next.js Build Validated
-          </div>
+        <div className="bg-ink-850 p-2.5 rounded-sm border border-ink-700 flex items-center gap-1.5">
+          <CheckCircle2 className="w-3.5 h-3.5 text-patina-400 shrink-0" />
+          <span className="truncate text-bone-300">2. Rules: <strong className="text-patina-400">0 FAIL</strong></span>
         </div>
-      </div>
-
-      {/* Diff Preview */}
-      <div className="bg-ink-850 border border-line-600 rounded-sm overflow-hidden flex flex-col">
-        <div className="flex items-center justify-between px-3 py-2 bg-ink-900 border-b border-line-600 text-xs font-mono text-bone-500">
-          <span>Unified Git Patch</span>
-          <button
-            onClick={handleCopyDiff}
-            className="flex items-center gap-1 text-bone-400 hover:text-bone-100 transition-colors"
-          >
-            {copied ? <Check className="w-3.5 h-3.5 text-patina-400" /> : <Copy className="w-3.5 h-3.5" />}
-            <span>{copied ? "COPIED" : "COPY DIFF"}</span>
-          </button>
+        <div className="bg-ink-850 p-2.5 rounded-sm border border-ink-700 flex items-center gap-1.5">
+          <ShieldCheck className="w-3.5 h-3.5 text-patina-400 shrink-0" />
+          <span className="truncate text-bone-300">3. Build: <strong className="text-patina-400">CLEAN</strong></span>
         </div>
-        <pre className="p-3 text-xs font-mono text-bone-300 overflow-x-auto leading-relaxed">
-          {diff.split("\n").map((line, idx) => {
-            let lineClass = "text-bone-300";
-            if (line.startsWith("+") && !line.startsWith("+++")) {
-              lineClass = "text-patina-400 bg-patina-tint/60 block px-1 -mx-1 rounded-sm";
-            } else if (line.startsWith("-") && !line.startsWith("---")) {
-              lineClass = "text-ember-400 bg-ember-tint/60 block px-1 -mx-1 rounded-sm";
-            } else if (line.startsWith("@")) {
-              lineClass = "text-steel-400";
-            }
-            return (
-              <div key={idx} className={lineClass}>
-                {line}
-              </div>
-            );
-          })}
-        </pre>
       </div>
 
       {/* Action Footer */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-        <div className="text-xs font-mono text-bone-500">
-          Ready for merge to restore Search Health: <strong className="text-patina-400">71 → 98 (+27)</strong>
-        </div>
-
-        {onMergeFix && !isApplied && (
+      {!isApplied && onMergeFix && (
+        <div className="pt-2 border-t border-ink-700 flex items-center justify-between">
+          <span className="font-mono text-xs text-bone-500">
+            One-click merge to staging (#185)
+          </span>
           <button
             onClick={onMergeFix}
             disabled={isMerging}
-            className="px-4 py-2 bg-patina-500 hover:bg-patina-400 text-ink-900 font-mono text-xs font-bold uppercase tracking-wider rounded-sm transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50"
+            className="flex items-center gap-2 px-5 py-2 bg-ember-500 hover:bg-ember-400 text-bone-100 rounded-sm font-mono text-xs font-bold uppercase tracking-wider transition-all shadow-cta disabled:opacity-50 h-9"
           >
-            <span>{isMerging ? "MERGING & RE-CRAWLING..." : "MERGE PR & VERIFY RECOVERY"}</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
+            <Check className="w-3.5 h-3.5 text-bone-100" />
+            <span>{isMerging ? "MERGING FIX..." : "MERGE AUTO-FIX PR"}</span>
           </button>
-        )}
-
-        {isApplied && (
-          <span className="px-3 py-1.5 bg-patina-tint text-patina-400 border border-patina-500/40 rounded-sm font-mono text-xs font-bold uppercase">
-            ✓ MERGED TO MAIN · RE-CRAWL VERIFIED GREEN
-          </span>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
