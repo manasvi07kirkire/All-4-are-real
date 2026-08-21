@@ -12,9 +12,13 @@ export class OpenRouterClient {
   }
 
   /**
-   * Execute chat completion across the chain of best FREE models.
-   * If a model hits a rate limit (429), capacity limit, or network timeout,
-   * it fails over seamlessly to the next model in the chain.
+   * Execute chat completion by racing every model in the FREE_MODELS_CHAIN in
+   * parallel and returning whichever succeeds first. Free-tier models are
+   * frequently rate-limited or slow at unpredictable moments; trying them one
+   * at a time means worst-case latency is the SUM of every attempt (seen in
+   * practice: 40-65s). Racing them means worst-case latency is the latency of
+   * whichever one happens to be fastest right now, and a single congested
+   * model can never block the others.
    */
   async completeWithFallback(
     messages: LLMMessage[],
@@ -31,64 +35,96 @@ export class OpenRouterClient {
 
     const errors: string[] = [];
 
-    for (const model of FREE_MODELS_CHAIN) {
-      try {
+    return new Promise<LLMCompletionResult>((resolve) => {
+      let settled = false;
+      let remaining = FREE_MODELS_CHAIN.length;
+
+      FREE_MODELS_CHAIN.forEach((model) => {
         console.log(`[OpenRouter] Attempting completion with model: ${model}`);
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s per model timeout
+        this.completeOne(model, messages, temperature, maxTokens, options.jsonMode, startTime)
+          .then((result) => {
+            if (!settled) {
+              settled = true;
+              resolve(result);
+            }
+          })
+          .catch((err: Error) => {
+            errors.push(`${model}: ${err.message}`);
+            remaining -= 1;
+            if (remaining === 0 && !settled) {
+              settled = true;
+              console.warn(`[OpenRouter] All free models failed (${errors.join("; ")}). Falling back to offline engine.`);
+              resolve(this.generateDeterministicFallback(messages, startTime));
+            }
+          });
+      });
+    });
+  }
 
-        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${this.apiKey}`,
-            "HTTP-Referer": this.appUrl,
-            "X-Title": this.appName,
-          },
-          body: JSON.stringify({
-            model,
-            messages,
-            temperature,
-            max_tokens: maxTokens,
-            response_format: options.jsonMode ? { type: "json_object" } : undefined,
-          }),
-          signal: controller.signal,
-        });
+  private async completeOne(
+    model: string,
+    messages: LLMMessage[],
+    temperature: number,
+    maxTokens: number,
+    jsonMode: boolean | undefined,
+    startTime: number
+  ): Promise<LLMCompletionResult> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s per model timeout
 
-        clearTimeout(timeoutId);
+    try {
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.apiKey}`,
+          "HTTP-Referer": this.appUrl,
+          "X-Title": this.appName,
+        },
+        body: JSON.stringify({
+          model,
+          messages,
+          temperature,
+          max_tokens: maxTokens,
+          response_format: jsonMode ? { type: "json_object" } : undefined,
+        }),
+        signal: controller.signal,
+      });
 
-        if (!response.ok) {
-          const errBody = await response.text();
-          console.warn(`[OpenRouter] Model ${model} returned status ${response.status}: ${errBody}`);
-          errors.push(`${model}: HTTP ${response.status}`);
-          continue; // Try next model in chain
-        }
-
-        const data = await response.json();
-        const text = data.choices?.[0]?.message?.content;
-
-        if (text && typeof text === "string" && text.trim().length > 0) {
-          const latencyMs = Date.now() - startTime;
-          return {
-            text: text.trim(),
-            modelUsed: model,
-            latencyMs,
-            tokensUsed: {
-              prompt: data.usage?.prompt_tokens ?? 0,
-              completion: data.usage?.completion_tokens ?? 0,
-              total: data.usage?.total_tokens ?? 0,
-            },
-            isFallback: false,
-          };
-        }
-      } catch (err: any) {
-        console.warn(`[OpenRouter] Model ${model} request failed: ${err.message}`);
-        errors.push(`${model}: ${err.message}`);
+      if (!response.ok) {
+        const errBody = await response.text();
+        console.warn(`[OpenRouter] Model ${model} returned status ${response.status}: ${errBody}`);
+        throw new Error(`HTTP ${response.status}`);
       }
-    }
 
-    console.warn(`[OpenRouter] All free models in chain failed (${errors.join("; ")}). Falling back to offline engine.`);
-    return this.generateDeterministicFallback(messages, startTime);
+      const data = await response.json();
+      const text = data.choices?.[0]?.message?.content;
+
+      if (!text || typeof text !== "string" || text.trim().length === 0) {
+        console.warn(`[OpenRouter] Model ${model} returned an empty completion (finish_reason: ${data.choices?.[0]?.finish_reason ?? "unknown"}).`);
+        throw new Error("empty completion");
+      }
+
+      return {
+        text: text.trim(),
+        modelUsed: model,
+        latencyMs: Date.now() - startTime,
+        tokensUsed: {
+          prompt: data.usage?.prompt_tokens ?? 0,
+          completion: data.usage?.completion_tokens ?? 0,
+          total: data.usage?.total_tokens ?? 0,
+        },
+        isFallback: false,
+      };
+    } catch (err: any) {
+      if (err.name === "AbortError") {
+        console.warn(`[OpenRouter] Model ${model} timed out after 15s.`);
+        throw new Error("timed out");
+      }
+      throw err;
+    } finally {
+      clearTimeout(timeoutId);
+    }
   }
 
   private generateDeterministicFallback(messages: LLMMessage[], startTime: number): LLMCompletionResult {

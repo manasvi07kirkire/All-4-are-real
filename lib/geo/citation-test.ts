@@ -63,20 +63,37 @@ Answer the query using only the facts explicitly present in the document above:`
     { temperature: 0.1, maxTokens: 400 }
   );
 
-  const answerLower = response.text.toLowerCase();
-
-  // Programmatic Grounding Check: compare each expected fact against model answer
-  const groundedFacts: GroundedFactCheck[] = expectedFacts.map((fact) => {
-    // Check if significant keywords from the fact appear in the answer
+  const isTextGrounded = (fact: string, text: string): boolean => {
     const keywords = fact.toLowerCase().split(/\s+/).filter((w) => w.length > 3);
-    const matchedCount = keywords.filter((kw) => answerLower.includes(kw)).length;
-    const isGrounded = keywords.length > 0 && matchedCount >= Math.ceil(keywords.length * 0.6);
+    const matchedCount = keywords.filter((kw) => text.toLowerCase().includes(kw)).length;
+    return keywords.length > 0 && matchedCount >= Math.ceil(keywords.length * 0.6);
+  };
 
-    return {
-      fact,
-      isGrounded,
-    };
-  });
+  // When no LLM is reachable, the shared offline fallback (lib/llm/openrouter.ts)
+  // returns generic placeholder text unrelated to this page. Rather than score
+  // that nonsense, build an honest deterministic answer: cite only the facts that
+  // are actually present in the source text, same as a careful answer engine would.
+  // Groundedness is decided directly from presence in the source (not re-derived
+  // from the generated sentence below) — naming a *missing* fact inside a caveat
+  // like "X could not be confirmed" would otherwise register as a false-positive
+  // match under a plain substring check.
+  let answerText: string;
+  let groundedFacts: GroundedFactCheck[];
+
+  if (response.isFallback) {
+    const present = expectedFacts.filter((f) => isTextGrounded(f, input.pageText));
+    const missing = expectedFacts.filter((f) => !present.includes(f));
+    const cited = present.length > 0 ? present.join("; ") : "no verifiable specifications";
+    const caveat =
+      missing.length > 0
+        ? ` Other details (${missing.join(", ")}) could not be confirmed from the provided source text.`
+        : "";
+    answerText = `Based strictly on the provided source text: ${cited}.${caveat}`;
+    groundedFacts = expectedFacts.map((fact) => ({ fact, isGrounded: present.includes(fact) }));
+  } else {
+    answerText = response.text;
+    groundedFacts = expectedFacts.map((fact) => ({ fact, isGrounded: isTextGrounded(fact, answerText) }));
+  }
 
   const groundedCount = groundedFacts.filter((f) => f.isGrounded).length;
   const fraction = expectedFacts.length > 0 ? groundedCount / expectedFacts.length : 1;
@@ -86,7 +103,7 @@ Answer the query using only the facts explicitly present in the document above:`
   return {
     url: input.url,
     query,
-    modelAnswer: response.text,
+    modelAnswer: answerText,
     modelUsed: response.modelUsed,
     groundedFacts,
     score,

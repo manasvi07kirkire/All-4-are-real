@@ -337,6 +337,13 @@ export default function DashboardPage() {
                     <span>Page 4: Discovery Map</span>
                     <ArrowUpRight className="w-4 h-4 text-patina-400 group-hover:translate-x-0.5 transition-transform" />
                   </Link>
+                  <Link
+                    href="/seo-advisor"
+                    className="flex items-center justify-between p-2 rounded-sm bg-bone-100 border border-bone-300 hover:border-steel-400 transition-all text-ink-900 group font-bold"
+                  >
+                    <span>Page 5: SEO Advisor</span>
+                    <ArrowUpRight className="w-4 h-4 text-steel-400 group-hover:translate-x-0.5 transition-transform" />
+                  </Link>
                 </div>
               </div>
             </div>

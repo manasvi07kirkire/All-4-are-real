@@ -129,3 +129,43 @@ model CitationTest {
   totalFacts    Int
   createdAt     DateTime  @default(now())
 }
+
+// ── SEO Advisor (pre-deploy suggestion feature) — additive only ──
+
+model SeoScan {
+  id             String          @id @default(cuid())
+  pageUrl        String
+  targetKeywords String          // JSON string array
+  content        String          // JSON serialized AdvisorPageContent, captured at scan time
+  status         String          // "SCANNING", "COMPLETE", "FAILED"
+  createdAt      DateTime        @default(now())
+
+  suggestions    SeoSuggestion[]
+  prs            SeoOptimizationPR[]
+}
+
+model SeoSuggestion {
+  id         String   @id @default(cuid())
+  scanId     String
+  scan       SeoScan  @relation(fields: [scanId], references: [id], onDelete: Cascade)
+  type       String   // "add-keyword" | "remove-keyword" | "rewrite-title" | "rewrite-meta" | "heading-change" | "internal-link"
+  location   String   // e.g. "H1", "meta description", "paragraph 2"
+  before     String
+  after      String
+  rationale  String
+  confidence Int      // 0 to 100
+  status     String   // "pending" | "approved" | "rejected" | "applied"
+  createdAt  DateTime @default(now())
+}
+
+model SeoOptimizationPR {
+  id                  String   @id @default(cuid())
+  scanId              String
+  scan                SeoScan  @relation(fields: [scanId], references: [id], onDelete: Cascade)
+  prUrl               String
+  prNumber            Int
+  appliedSuggestionIds String  // JSON string array
+  validationResult    String   // JSON { titleLength, metaLength, duplicateH1, keywordDensityOk }
+  status              String   // "OPEN" (never "MERGED" — SearchOps never merges)
+  createdAt           DateTime @default(now())
+}

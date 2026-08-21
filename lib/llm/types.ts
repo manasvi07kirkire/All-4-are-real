@@ -21,13 +21,18 @@ export interface LLMCompletionResult {
   isFallback: boolean;
 }
 
+// Kept in sync against OpenRouter's live free-tier catalog (many free model slugs
+// get renamed/deprecated over time — verify against https://openrouter.ai/api/v1/models
+// if this chain starts failing wholesale again). "openrouter/auto" is intentionally
+// NOT first: its non-deterministic routing can land on a reasoning model that burns
+// the whole token budget on hidden chain-of-thought and returns empty content — it's
+// kept as a late fallback instead, behind concrete general-purpose instruct models.
 export const FREE_MODELS_CHAIN = [
+  "google/gemma-4-31b-it:free",
+  "openai/gpt-oss-20b:free",
+  "nvidia/nemotron-nano-9b-v2:free",
+  "google/gemma-4-26b-a4b-it:free",
+  "z-ai/glm-5.2:free",
+  "liquid/lfm-2.5-2.6b:free",
   "openrouter/auto",
-  "deepseek/deepseek-r1:free",
-  "google/gemini-2.0-pro-exp-02-05:free",
-  "google/gemini-2.0-flash-lite-preview-02-05:free",
-  "meta-llama/llama-3.2-3b-instruct:free",
-  "meta-llama/llama-3.2-1b-instruct:free",
-  "qwen/qwen-2.5-coder-32b-instruct:free",
-  "cognitivecomputations/dolphin3.0-r1-mistral-24b:free",
 ] as const;

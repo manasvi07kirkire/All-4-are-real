@@ -13,6 +13,7 @@ import {
   Zap,
   Activity,
   GitBranch,
+  Sparkles,
 } from "lucide-react";
 
 interface FieldManualNavProps {
@@ -35,6 +36,7 @@ export const FieldManualNav: React.FC<FieldManualNavProps> = ({
     { href: "/regression/184", label: "REGRESSION", icon: AlertTriangle },
     { href: "/geo", label: "GEO ENGINE", icon: Compass },
     { href: "/graph", label: "CRAWLER GRAPH", icon: Network },
+    { href: "/seo-advisor", label: "SEO ADVISOR", icon: Sparkles },
   ];
 
   return (
@@ -74,7 +76,9 @@ export const FieldManualNav: React.FC<FieldManualNavProps> = ({
                   className={clsx(
                     "px-3 py-1.5 transition-all uppercase tracking-wider font-semibold border-b-2",
                     isActive
-                      ? "border-ember-600 text-ink-900 bg-bone-300/30"
+                      ? link.href === "/seo-advisor"
+                        ? "border-steel-400 text-ink-900 bg-bone-300/30"
+                        : "border-ember-600 text-ink-900 bg-bone-300/30"
                       : "border-transparent text-bone-700 hover:text-ink-900 hover:border-bone-500"
                   )}
                 >
@@ -149,6 +153,7 @@ export const FieldManualSidebar: React.FC = () => {
     { href: "/regression/184", label: "REGRESSION DETECTED", icon: AlertTriangle },
     { href: "/geo", label: "GEO CITATION TEST", icon: Compass },
     { href: "/graph", label: "CRAWLER TOPOLOGY", icon: Network },
+    { href: "/seo-advisor", label: "SEO ADVISOR", icon: Sparkles },
   ];
 
   return (
