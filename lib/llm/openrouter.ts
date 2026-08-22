@@ -12,13 +12,9 @@ export class OpenRouterClient {
   }
 
   /**
-   * Execute chat completion by racing every model in the FREE_MODELS_CHAIN in
-   * parallel and returning whichever succeeds first. Free-tier models are
-   * frequently rate-limited or slow at unpredictable moments; trying them one
-   * at a time means worst-case latency is the SUM of every attempt (seen in
-   * practice: 40-65s). Racing them means worst-case latency is the latency of
-   * whichever one happens to be fastest right now, and a single congested
-   * model can never block the others.
+   * Execute chat completion by racing only 100% FREE models (:free) in parallel.
+   * Free-tier models are frequently rate-limited or slow at unpredictable moments;
+   * racing them means zero-cost execution with minimum latency.
    */
   async completeWithFallback(
     messages: LLMMessage[],
@@ -33,14 +29,22 @@ export class OpenRouterClient {
       return this.generateDeterministicFallback(messages, startTime);
     }
 
+    // Safety guard: filter strictly to models with explicit ':free' suffix
+    const verifiedFreeModels = FREE_MODELS_CHAIN.filter((m) => m.endsWith(":free"));
+
+    if (verifiedFreeModels.length === 0) {
+      console.warn("[OpenRouter] No verified :free models configured. Using offline fallback.");
+      return this.generateDeterministicFallback(messages, startTime);
+    }
+
     const errors: string[] = [];
 
     return new Promise<LLMCompletionResult>((resolve) => {
       let settled = false;
-      let remaining = FREE_MODELS_CHAIN.length;
+      let remaining = verifiedFreeModels.length;
 
-      FREE_MODELS_CHAIN.forEach((model) => {
-        console.log(`[OpenRouter] Attempting completion with model: ${model}`);
+      verifiedFreeModels.forEach((model) => {
+        console.log(`[OpenRouter] Racing free model: ${model}`);
         this.completeOne(model, messages, temperature, maxTokens, options.jsonMode, startTime)
           .then((result) => {
             if (!settled) {
@@ -69,6 +73,11 @@ export class OpenRouterClient {
     jsonMode: boolean | undefined,
     startTime: number
   ): Promise<LLMCompletionResult> {
+    // Hard check: Strictly disallow any non-free model
+    if (!model.endsWith(":free")) {
+      throw new Error(`Rejected non-free model: ${model}. Only :free models are permitted.`);
+    }
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s per model timeout
 
