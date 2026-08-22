@@ -19,34 +19,43 @@ export async function POST(req: NextRequest) {
     const content = await extractTargetContent(pageUrl);
     const suggestions = await generateSuggestions({ pageUrl, targetKeywords, content });
 
-    const scan = await db.seoScan.create({
-      data: {
-        pageUrl,
-        targetKeywords: JSON.stringify(targetKeywords),
-        content: JSON.stringify(content),
-        status: "COMPLETE",
-        suggestions: {
-          create: suggestions.map((s) => ({
-            id: s.id,
-            type: s.type,
-            location: s.location,
-            before: s.before,
-            after: s.after,
-            rationale: s.rationale,
-            confidence: s.confidence,
-            status: s.status,
-          })),
+    let scanId = `scan_${Date.now()}`;
+    let returnedSuggestions = suggestions;
+
+    try {
+      const scan = await db.seoScan.create({
+        data: {
+          pageUrl,
+          targetKeywords: JSON.stringify(targetKeywords),
+          content: JSON.stringify(content),
+          status: "COMPLETE",
+          suggestions: {
+            create: suggestions.map((s) => ({
+              id: s.id,
+              type: s.type,
+              location: s.location,
+              before: s.before,
+              after: s.after,
+              rationale: s.rationale,
+              confidence: s.confidence,
+              status: s.status,
+            })),
+          },
         },
-      },
-      include: { suggestions: true },
-    });
+        include: { suggestions: true },
+      });
+      scanId = scan.id;
+      returnedSuggestions = scan.suggestions as any;
+    } catch (dbErr: any) {
+      console.warn("[API seo-scan] Database persist fallback:", dbErr.message);
+    }
 
     return NextResponse.json({
-      scanId: scan.id,
-      pageUrl: scan.pageUrl,
+      scanId,
+      pageUrl,
       targetKeywords,
       content,
-      suggestions: scan.suggestions,
+      suggestions: returnedSuggestions,
     });
   } catch (err: any) {
     console.error("[API seo-scan] Error:", err);
