@@ -2,101 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── BASE RESET & TYPOGRAPHY FOUNDATION ── */
-html {
-  font-size: 16px;
-  -webkit-text-size-adjust: 100%;
-  scroll-behavior: smooth;
-}
-
-*,
-*::before,
-*::after {
+* {
   box-sizing: border-box;
 }
 
 body {
   background-color: #F4EDE1;
   color: #100E0C;
-  font-family: "Inter", "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  font-size: 1rem;
-  line-height: 1.6;
+  font-family: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   min-height: 100vh;
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  letter-spacing: -0.01em;
 }
 
-/* ── FLUID TYPE SCALE ── */
-:root {
-  --text-display: clamp(2rem, 5vw, 3.5rem);
-  /* 32–56px: Page titles */
-  --text-metric: clamp(3rem, 6vw, 4.5rem);
-  /* 48–72px: Gauge scores */
-  --text-heading: clamp(1rem, 2vw, 1.25rem);
-  /* 16–20px: Card headings */
-  --text-subheading: clamp(0.875rem, 1.5vw, 1rem);
-  /* 14–16px: Sub-headings */
-  --text-body: clamp(0.8125rem, 1.2vw, 0.9375rem);
-  /* 13–15px: Body text */
-  --text-label: 0.75rem;
-  /* 12px: Labels (minimum) */
-  --text-eyebrow: 0.6875rem;
-  /* 11px: Only for eyebrows with UPPERCASE+tracking */
-}
-
-/* ── ENFORCE TABULAR NUMERALS ── */
+/* Enforce tabular numerals on all monospace and numeric data elements */
 .font-mono,
 code,
 pre,
-.tabular-nums,
-[class*="font-display"] {
+.tabular-nums {
   font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-variant-numeric: tabular-nums;
 }
 
-/* ── MINIMUM FONT-SIZE ENFORCEMENT ── */
-/* No text below 11px anywhere in the app */
-.text-\[9px\],
-.text-\[10px\] {
-  font-size: 0.6875rem !important;
-  /* 11px minimum */
+/* Field Manual Animations */
+@keyframes pulse-border {
+  0%, 100% { border-color: rgba(194, 63, 16, 0.4); }
+  50% { border-color: rgba(194, 63, 16, 1); }
 }
 
-/* ── ANIMATIONS ── */
+@keyframes pulse-node {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
 
-/* Pulsing Ember Border (Active Regressions) */
-@keyframes pulse-border {
-
-  0%,
-  100% {
-    border-color: rgba(194, 63, 16, 0.4);
-  }
-
-  50% {
-    border-color: rgba(194, 63, 16, 1.0);
-  }
+@keyframes flow-line {
+  0% { stroke-dashoffset: 24; }
+  100% { stroke-dashoffset: 0; }
 }
 
 .pulse-error-border {
   animation: pulse-border 2s infinite ease-in-out;
-}
-
-/* Pulsing Node (Root Crawler Discovery) */
-@keyframes pulse-node {
-
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.8;
-  }
-
-  50% {
-    transform: scale(1.1);
-    opacity: 1.0;
-  }
 }
 
 .node-active {
@@ -104,68 +51,12 @@ pre,
   transform-origin: center;
 }
 
-/* Streaming Flow Lines (Link Traversal) */
-@keyframes flow-line {
-  0% {
-    stroke-dashoffset: 24;
-  }
-
-  100% {
-    stroke-dashoffset: 0;
-  }
-}
-
 .line-active {
   stroke-dasharray: 4;
   animation: flow-line 1s linear infinite;
 }
 
-/* Mobile Drawer Slide-In */
-@keyframes slide-in-from-right {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-.drawer-slide-in {
-  animation: slide-in-from-right 0.25s ease-out forwards;
-}
-
-/* Fade In Up (Cards, Sections) */
-@keyframes fade-in-up {
-  from {
-    transform: translateY(8px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-.animate-fade-in-up {
-  animation: fade-in-up 0.35s ease-out forwards;
-}
-
-/* Gauge Arc Fill */
-@keyframes gauge-fill {
-  from {
-    stroke-dashoffset: var(--gauge-total);
-  }
-
-  to {
-    stroke-dashoffset: var(--gauge-offset);
-  }
-}
-
-/* ── SCROLLBARS ── */
+/* Hide scrollbar helper */
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -175,9 +66,10 @@ pre,
   display: none;
 }
 
+/* Field Manual Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
@@ -186,41 +78,9 @@ pre,
 
 ::-webkit-scrollbar-thumb {
   background: #D6CBB8;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: #A2937C;
-}
-
-/* ── FOCUS VISIBLE ── */
-:focus-visible {
-  outline: 2px solid #C23F10;
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-/* ── SAFE AREA (Notch/Island Support) ── */
-.safe-top {
-  padding-top: env(safe-area-inset-top);
-}
-
-.safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-/* ── TOUCH TARGET MINIMUM ── */
-button,
-a,
-[role="button"] {
-  min-height: 36px;
-}
-
-/* ── OVERLAY BACKDROP ── */
-.overlay-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(16, 14, 12, 0.65);
-  backdrop-filter: blur(4px);
-  z-index: 40;
 }
