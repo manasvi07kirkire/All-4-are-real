@@ -24,45 +24,50 @@ export const FindingCard: React.FC<FindingCardProps> = ({
   const borderColor = isResolved
     ? "border-l-patina-400"
     : isCritical || isHigh
-    ? "border-l-ember-600"
-    : "border-l-marigold-400";
+      ? "border-l-ember-600"
+      : "border-l-marigold-400";
 
   return (
     <div
       className={clsx(
-        "bg-ink-800 border border-ink-700 rounded-sm p-4 sm:p-5 border-l-4 transition-all flex flex-col gap-4 relative overflow-hidden",
+        "bg-ink-800 border border-ink-700 rounded-md p-5 sm:p-6 border-l-[5px] transition-all flex flex-col gap-5 relative overflow-hidden shadow-card",
         borderColor
       )}
     >
       {/* Top Meta Header */}
-      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-ink-700 pb-3">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-ink-700 pb-4">
         <div className="flex items-center gap-2 flex-wrap">
           {/* Severity Chip */}
           <span
             className={clsx(
-              "font-mono text-[11px] font-bold px-2 py-0.5 rounded-sm border uppercase tracking-wider",
+              "font-mono text-xs font-bold px-3 py-1 rounded-sm border uppercase tracking-wider flex items-center gap-1.5",
               isResolved
                 ? "text-patina-400 bg-patina-tint border-patina-400/40"
                 : isCritical
-                ? "text-ember-400 bg-ember-tint border-ember-400/40"
-                : "text-marigold-400 bg-marigold-tint border-marigold-400/40"
+                  ? "text-ember-400 bg-ember-tint border-ember-400/40"
+                  : "text-marigold-400 bg-marigold-tint border-marigold-400/40"
             )}
           >
+            {isResolved ? (
+              <CheckCircle className="w-3.5 h-3.5" />
+            ) : (
+              <AlertCircle className="w-3.5 h-3.5" />
+            )}
             {isResolved ? "REMEDIATED" : finding.severity}
           </span>
 
           {/* Confidence Chip */}
-          <span className="font-mono text-[11px] text-bone-300 bg-ink-850 px-2 py-0.5 rounded-sm border border-ink-700 tabular-nums">
+          <span className="font-mono text-xs text-bone-300 bg-ink-850 px-3 py-1 rounded-sm border border-ink-700 tabular-nums font-semibold">
             {finding.confidence}% CONFIDENCE
           </span>
 
           {/* Lens Chip */}
-          <span className="font-mono text-[10.5px] text-steel-400 uppercase tracking-wide bg-ink-850 px-2 py-0.5 rounded-sm border border-ink-700 font-bold">
+          <span className="font-mono text-xs text-steel-400 uppercase tracking-wide bg-ink-850 px-3 py-1 rounded-sm border border-ink-700 font-bold">
             {finding.lens === "search"
-              ? "SEARCH CRAWLER LENS"
+              ? "SEARCH CRAWLER"
               : finding.lens === "ai-answer"
-              ? "AI-ANSWER ENGINE LENS"
-              : "DUAL LENS"}
+                ? "AI-ANSWER ENGINE"
+                : "DUAL LENS"}
           </span>
         </div>
 
@@ -71,35 +76,37 @@ export const FindingCard: React.FC<FindingCardProps> = ({
       </div>
 
       {/* Title & LLM Narration */}
-      <div className="flex flex-col gap-2">
-        <h3 className="font-sans font-medium text-base text-bone-100 flex items-center gap-2">
-          {!isResolved && <AlertCircle className="w-4 h-4 text-ember-400 shrink-0" />}
-          {isResolved && <CheckCircle className="w-4 h-4 text-patina-400 shrink-0" />}
+      <div className="flex flex-col gap-3">
+        <h3 className="font-sans font-semibold text-lg sm:text-xl text-bone-100 flex items-center gap-2.5 leading-snug">
+          {!isResolved && <AlertCircle className="w-5 h-5 text-ember-400 shrink-0" />}
+          {isResolved && <CheckCircle className="w-5 h-5 text-patina-400 shrink-0" />}
           <span>{finding.title}</span>
         </h3>
 
         {finding.description && (
-          <div className="bg-ink-850 p-3 rounded-sm border border-ink-700 text-xs font-mono text-bone-300 leading-relaxed">
-            <div className="flex items-center gap-1.5 text-bone-500 text-[10.5px] uppercase tracking-wider mb-1 font-bold">
+          <div className="bg-ink-850 p-4 rounded-sm border border-ink-700 flex flex-col gap-1.5">
+            <div className="flex items-center gap-1.5 text-bone-500 text-xs uppercase tracking-wider font-bold mb-1">
               <Sparkles className="w-3.5 h-3.5 text-marigold-400" />
               <span>Attribution Narration</span>
             </div>
-            <p>{finding.description}</p>
+            <p className="font-mono text-sm text-bone-300 leading-relaxed">
+              {finding.description}
+            </p>
           </div>
         )}
       </div>
 
       {/* Evidence & Root Cause Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Evidence Block */}
-        <div className="bg-ink-850 p-3 rounded-sm border border-ink-700 flex flex-col gap-1.5 font-mono">
-          <span className="text-[10.5px] font-bold text-bone-500 uppercase tracking-wider">
+        <div className="bg-ink-850 p-4 rounded-sm border border-ink-700 flex flex-col gap-2.5 font-mono">
+          <span className="text-xs font-bold text-bone-500 uppercase tracking-wider">
             Deterministic Evidence
           </span>
-          <div className="flex flex-col gap-1 text-xs text-bone-300">
+          <div className="flex flex-col gap-2 text-sm text-bone-300">
             <div>
               <span className="text-bone-500">Pages Affected: </span>
-              <strong className="text-bone-100 tabular-nums">
+              <strong className="text-bone-100 tabular-nums text-base">
                 {finding.evidence.pagesAffected} routes
               </strong>
             </div>
@@ -114,11 +121,11 @@ export const FindingCard: React.FC<FindingCardProps> = ({
               <span className="text-bone-100">{finding.evidence.template}</span>
             </div>
             {finding.evidence.sampleUrls && (
-              <div className="mt-1 pt-1.5 border-t border-ink-700">
-                <span className="text-bone-500 text-[10.5px] block mb-0.5">Sample Regressed URLs:</span>
-                <div className="flex flex-col gap-0.5 truncate text-[11px] text-bone-400">
+              <div className="mt-1 pt-2 border-t border-ink-700">
+                <span className="text-bone-500 text-xs block mb-1">Sample Regressed URLs:</span>
+                <div className="flex flex-col gap-1 text-xs text-bone-400">
                   {finding.evidence.sampleUrls.slice(0, 2).map((u, i) => (
-                    <code key={i} className="truncate">
+                    <code key={i} className="truncate text-bone-300 bg-ink-900 px-2 py-0.5 rounded-sm">
                       {u}
                     </code>
                   ))}
@@ -129,42 +136,41 @@ export const FindingCard: React.FC<FindingCardProps> = ({
         </div>
 
         {/* Root Cause Attribution Block */}
-        <div className="bg-ink-850 p-3 rounded-sm border border-ink-700 flex flex-col justify-between gap-2 font-mono">
-          <div className="flex flex-col gap-1.5">
-            <span className="text-[10.5px] font-bold text-bone-500 uppercase tracking-wider flex items-center gap-1.5">
+        <div className="bg-ink-850 p-4 rounded-sm border border-ink-700 flex flex-col justify-between gap-3 font-mono">
+          <div className="flex flex-col gap-2">
+            <span className="text-xs font-bold text-bone-500 uppercase tracking-wider flex items-center gap-1.5">
               <FileCode className="w-3.5 h-3.5 text-steel-400" />
-              <span>AST Root Cause Attribution</span>
+              AST Root Cause Attribution
             </span>
 
             {finding.rootCause ? (
-              <div className="flex flex-col gap-1 text-xs">
-                <div className="text-ember-400 font-bold">
+              <div className="flex flex-col gap-1.5">
+                <div className="text-ember-400 font-bold text-sm">
                   {finding.rootCause.file}:{finding.rootCause.line}
                 </div>
-                <div className="text-bone-500 text-[11px]">
+                <div className="text-bone-500 text-sm">
                   Component: <span className="text-bone-300">{finding.rootCause.component}</span>
                 </div>
                 {finding.rootCause.snippet && (
-                  <pre className="text-[10.5px] text-ember-400 bg-ink-900 p-1.5 rounded-sm border border-ink-700 overflow-x-auto mt-1">
+                  <pre className="text-xs text-ember-400 bg-ink-900 p-2.5 rounded-sm border border-ink-700 overflow-x-auto mt-1 leading-relaxed">
                     {finding.rootCause.snippet}
                   </pre>
                 )}
               </div>
             ) : (
-              <span className="text-xs text-bone-500">
+              <span className="text-sm text-bone-500">
                 Analyzing commit diff signatures...
               </span>
             )}
           </div>
 
-          {/* Action CTA */}
           {!isResolved && onGenerateFix && (
             <button
               onClick={() => onGenerateFix(finding)}
               disabled={isFixing}
-              className="mt-2 w-full flex items-center justify-center gap-2 py-2 px-3 bg-ember-500 hover:bg-ember-400 text-bone-100 rounded-sm font-mono text-xs font-bold tracking-wider uppercase transition-all shadow-cta disabled:opacity-50 h-9"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-ember-500 hover:bg-ember-400 text-bone-100 rounded-sm font-mono text-sm font-bold tracking-wider uppercase transition-all shadow-cta disabled:opacity-50"
             >
-              <Wrench className="w-3.5 h-3.5" />
+              <Wrench className="w-4 h-4" />
               <span>{isFixing ? "VALIDATING PATCH..." : "GENERATE AUTO-FIX PR"}</span>
             </button>
           )}

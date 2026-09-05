@@ -37,8 +37,8 @@ export default function DashboardPage() {
     activeDeployNumber === 183
       ? DEMO_SCENARIO_183
       : activeDeployNumber === 185
-      ? DEMO_SCENARIO_185
-      : DEMO_SCENARIO_184;
+        ? DEMO_SCENARIO_185
+        : DEMO_SCENARIO_184;
 
   const deploymentsList: DeploymentSummary[] = [
     {
@@ -126,7 +126,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-bone-100 text-ink-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#0a0e1a] text-[#f0f6fc] flex flex-col font-sans relative">
       {/* Field Manual Top Navigation */}
       <FieldManualNav
         currentDeployNumber={activeDeployNumber}
@@ -146,36 +146,45 @@ export default function DashboardPage() {
         {/* Main Content Area */}
         <main className="flex-1 p-4 sm:p-6 md:p-8 flex flex-col gap-6 max-w-[1300px]">
           {/* Page Title & Status Banner */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-bone-300 pb-4">
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-bold text-ember-600 uppercase tracking-widest">
-                  // SCREEN_01
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 border-b-2 border-bone-300 pb-5">
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="font-mono text-xs font-bold text-ember-600 uppercase tracking-widest bg-ember-600/10 px-2 py-0.5 rounded-sm border border-ember-600/20">
+                  SCREEN_01
                 </span>
-                <span className="font-mono text-xs text-bone-700">·</span>
-                <span className="font-mono text-xs font-semibold text-bone-700">
-                  DEPLOY #{activeDeployNumber} ({currentScenario.status})
+                <span className="font-sans text-sm text-bone-700">
+                  Deploy <strong className="text-ink-900 font-mono">#{activeDeployNumber}</strong> · {currentScenario.status}
                 </span>
               </div>
-              <h1 className="font-mono font-bold text-2xl sm:text-3xl text-ink-900 tracking-tight mt-1">
+              <h1 className="font-mono font-black text-3xl sm:text-4xl md:text-5xl text-ink-900 tracking-tight leading-none">
                 SEARCHOPS FIELD MANUAL
               </h1>
+              <p className="font-sans text-sm text-bone-700">
+                Dual-lens discoverability CI/CD — Search Crawlers &amp; AI Answer Engines
+              </p>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
               <Link
                 href="/regression/184"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-bone-300/40 hover:bg-bone-300 border border-bone-300 rounded-sm font-mono text-xs font-bold text-ink-900 uppercase transition-all"
+                className="flex items-center gap-1.5 px-4 py-2 bg-ember-600/10 hover:bg-ember-600/20 border border-ember-600/30 rounded-sm font-sans text-sm font-semibold text-ember-600 transition-all"
               >
                 <span>Regression View</span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-ember-600" />
+                <ArrowUpRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/remediation"
+                className="flex items-center gap-1.5 px-4 py-2 bg-patina-400/10 hover:bg-patina-400/20 border border-patina-400/30 rounded-sm font-sans text-sm font-semibold text-patina-600 transition-all"
+              >
+                <span>Remediation Gate</span>
+                <ArrowUpRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/geo"
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-bone-300/40 hover:bg-bone-300 border border-bone-300 rounded-sm font-mono text-xs font-bold text-ink-900 uppercase transition-all"
+                className="flex items-center gap-1.5 px-4 py-2 bg-bone-300/40 hover:bg-bone-300 border border-bone-300 rounded-sm font-sans text-sm font-semibold text-ink-900 transition-all"
               >
                 <span>GEO Lens</span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-steel-400" />
+                <ArrowUpRight className="w-4 h-4 text-steel-400" />
               </Link>
             </div>
           </div>
@@ -188,7 +197,8 @@ export default function DashboardPage() {
           />
 
           {/* Dual Gauges Section */}
-          <section className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+          <section aria-label="Health Gauges" className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
+
             <Gauge
               value={currentScenario.scores.searchHealth}
               title="Search Crawler Health"
@@ -204,17 +214,23 @@ export default function DashboardPage() {
           </section>
 
           {/* Bento Split: Findings (2/3) + System Load / Telemetry (1/3) */}
-          <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <section aria-label="Regression Findings" className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Findings Panel (8 cols on lg) */}
-            <div className="lg:col-span-8 flex flex-col gap-4">
-              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-bone-300 pb-2">
-                <span className="font-mono text-xs font-bold text-ink-900 uppercase tracking-wider">
-                  DETERMINISTIC REGRESSION FINDINGS ({currentScenario.findings.length})
-                </span>
-                <span className="font-mono text-[10.5px] text-bone-700 font-semibold">
+            <div className="lg:col-span-8 flex flex-col gap-5">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b-2 border-bone-300 pb-3">
+                <div className="flex items-center gap-3">
+                  <span className="font-mono text-sm font-black text-ink-900 uppercase tracking-wider">
+                    REGRESSION FINDINGS
+                  </span>
+                  <span className="font-mono text-sm font-black text-ember-600 bg-ember-600/10 px-2.5 py-0.5 rounded-sm border border-ember-600/20">
+                    {currentScenario.findings.length}
+                  </span>
+                </div>
+                <span className="font-sans text-xs text-bone-700">
                   Rule Engine Attribution · Pure Code
                 </span>
               </div>
+
 
               {currentScenario.findings.length === 0 ? (
                 <div className="bg-bone-100 border border-bone-300 rounded-sm p-6 sm:p-8 text-center flex flex-col items-center justify-center gap-3">
@@ -269,81 +285,71 @@ export default function DashboardPage() {
 
             {/* System Load & Telemetry Sidebar (4 cols on lg) */}
             <div className="lg:col-span-4 flex flex-col gap-4">
-              <div className="flex items-center justify-between border-b border-bone-300 pb-2">
-                <span className="font-mono text-xs font-bold text-ink-900 uppercase tracking-wider">
+              <div className="flex items-center justify-between border-b-2 border-bone-300 pb-3">
+                <span className="font-mono text-sm font-black text-ink-900 uppercase tracking-wider">
                   SYSTEM TELEMETRY
                 </span>
-                <span className="font-mono text-[10px] text-patina-600 bg-patina-400/20 px-1.5 py-0.5 rounded-sm font-bold">
+                <span className="font-mono text-xs text-patina-600 bg-patina-400/20 px-2 py-0.5 rounded-sm font-bold border border-patina-400/30">
                   LIVE
                 </span>
               </div>
 
               {/* Telemetry Card 1: Crawl Budget */}
-              <div className="bg-bone-100 border border-bone-300 rounded-sm p-4 flex flex-col gap-2 font-mono">
-                <div className="flex items-center justify-between text-xs text-bone-700 font-bold uppercase">
-                  <span>CRAWL BUDGET EFFICIENCY</span>
-                  <span className="text-ink-900 tabular-nums">94.2%</span>
+              <div className="bg-bone-100 border border-bone-300 rounded-md p-5 flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs text-bone-700 font-bold uppercase tracking-wider">CRAWL BUDGET</span>
+                  <span className="font-mono text-2xl font-black text-patina-600 tabular-nums">94.2%</span>
                 </div>
-                <div className="w-full bg-bone-300 h-2 rounded-sm overflow-hidden">
-                  <div className="bg-patina-400 h-full w-[94.2%]" />
+                <div className="w-full bg-bone-300 h-2.5 rounded-sm overflow-hidden">
+                  <div className="bg-patina-400 h-full w-[94.2%] transition-all duration-700" />
                 </div>
-                <span className="text-[11px] text-bone-700">
-                  Googlebot & Bingbot index latency: <strong>42ms</strong> avg
+                <span className="font-sans text-xs text-bone-700">
+                  Googlebot &amp; Bingbot index latency: <strong className="text-ink-900">42ms</strong> avg
                 </span>
               </div>
 
               {/* Telemetry Card 2: Neural Grounding Index */}
-              <div className="bg-bone-100 border border-bone-300 rounded-sm p-4 flex flex-col gap-2 font-mono">
-                <div className="flex items-center justify-between text-xs text-bone-700 font-bold uppercase">
-                  <span>NEURAL GROUNDING FIDELITY</span>
-                  <span className={activeDeployNumber === 184 ? "text-ember-600 font-bold tabular-nums" : "text-patina-600 font-bold tabular-nums"}>
-                    {activeDeployNumber === 184 ? "40% (POISONED)" : "100% (STABLE)"}
+              <div className="bg-bone-100 border border-bone-300 rounded-md p-5 flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs text-bone-700 font-bold uppercase tracking-wider">NEURAL GROUNDING</span>
+                  <span className={`font-mono text-2xl font-black tabular-nums ${activeDeployNumber === 184 ? "text-ember-600" : "text-patina-600"}`}>
+                    {activeDeployNumber === 184 ? "40%" : "100%"}
                   </span>
                 </div>
-                <div className="w-full bg-bone-300 h-2 rounded-sm overflow-hidden">
+                <div className="w-full bg-bone-300 h-2.5 rounded-sm overflow-hidden">
                   <div
-                    className={activeDeployNumber === 184 ? "bg-ember-600 h-full w-[40%]" : "bg-patina-400 h-full w-[100%]"}
+                    className={`h-full transition-all duration-700 ${activeDeployNumber === 184 ? "bg-ember-600 w-[40%]" : "bg-patina-400 w-full"}`}
                   />
                 </div>
-                <span className="text-[11px] text-bone-700">
-                  Target entities extracted by LLM engines
+                <span className="font-sans text-xs text-bone-700">
+                  {activeDeployNumber === 184
+                    ? "⚠ Poisoned — AI engines hallucinating"
+                    : "Target entities extracted by LLM engines"}
                 </span>
               </div>
 
-              {/* Telemetry Card 3: Quick Navigation to Field Manual Views */}
-              <div className="bg-bone-300/30 border border-bone-300 rounded-sm p-4 flex flex-col gap-3 font-mono">
-                <span className="text-xs font-bold text-ink-900 uppercase">
+              {/* Telemetry Card 3: Quick Navigation */}
+              <div className="bg-bone-300/30 border border-bone-300 rounded-md p-4 flex flex-col gap-3">
+                <span className="font-mono text-xs font-black text-ink-900 uppercase tracking-wider">
                   FIELD MANUAL MODULES
                 </span>
-                <div className="flex flex-col gap-2 text-xs">
-                  <Link
-                    href="/regression/184"
-                    className="flex items-center justify-between p-2 rounded-sm bg-bone-100 border border-bone-300 hover:border-ember-600 transition-all text-ink-900 group font-bold"
-                  >
-                    <span>Page 2: Regression Bento</span>
-                    <ArrowUpRight className="w-4 h-4 text-ember-600 group-hover:translate-x-0.5 transition-transform" />
-                  </Link>
-                  <Link
-                    href="/geo"
-                    className="flex items-center justify-between p-2 rounded-sm bg-bone-100 border border-bone-300 hover:border-steel-400 transition-all text-ink-900 group font-bold"
-                  >
-                    <span>Page 3: GEO Citation Test</span>
-                    <ArrowUpRight className="w-4 h-4 text-steel-400 group-hover:translate-x-0.5 transition-transform" />
-                  </Link>
-                  <Link
-                    href="/graph"
-                    className="flex items-center justify-between p-2 rounded-sm bg-bone-100 border border-bone-300 hover:border-patina-400 transition-all text-ink-900 group font-bold"
-                  >
-                    <span>Page 4: Discovery Map</span>
-                    <ArrowUpRight className="w-4 h-4 text-patina-400 group-hover:translate-x-0.5 transition-transform" />
-                  </Link>
-                  <Link
-                    href="/seo-advisor"
-                    className="flex items-center justify-between p-2 rounded-sm bg-bone-100 border border-bone-300 hover:border-steel-400 transition-all text-ink-900 group font-bold"
-                  >
-                    <span>Page 5: SEO Advisor</span>
-                    <ArrowUpRight className="w-4 h-4 text-steel-400 group-hover:translate-x-0.5 transition-transform" />
-                  </Link>
+                <div className="flex flex-col gap-2">
+                  {[
+                    { href: "/regression/184", label: "Regression Bento", accent: "hover:border-ember-600", icon: "text-ember-600" },
+                    { href: "/geo", label: "GEO Citation Test", accent: "hover:border-steel-400", icon: "text-steel-400" },
+                    { href: "/graph", label: "Crawler Map", accent: "hover:border-patina-400", icon: "text-patina-500" },
+                    { href: "/remediation", label: "Remediation Gate", accent: "hover:border-patina-400", icon: "text-patina-500" },
+                    { href: "/seo-advisor", label: "SEO Advisor", accent: "hover:border-steel-400", icon: "text-steel-400" },
+                  ].map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`flex items-center justify-between p-3 rounded-sm bg-bone-100 border border-bone-300 ${item.accent} transition-all group`}
+                    >
+                      <span className="font-sans text-sm font-semibold text-ink-900">{item.label}</span>
+                      <ArrowUpRight className={`w-4 h-4 ${item.icon} group-hover:translate-x-0.5 transition-transform`} />
+                    </Link>
+                  ))}
                 </div>
               </div>
             </div>
@@ -352,18 +358,22 @@ export default function DashboardPage() {
       </div>
 
       {/* Field Manual Footer */}
-      <footer className="w-full bg-bone-100 border-t border-bone-300 py-3.5 px-4 sm:px-8">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-bone-700">
-          <div className="flex items-center gap-2">
-            <span className="text-ink-900 font-bold">SEARCHOPS_v1.0</span>
-            <span>·</span>
-            <span>THE FIELD MANUAL DESIGN SYSTEM</span>
+      <footer className="w-full bg-bone-100 border-t-2 border-bone-300 py-4 px-4 sm:px-8">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-6 h-6 bg-ember-600 text-bone-100 font-mono font-black text-xs flex items-center justify-center rounded-sm">
+              SO
+            </div>
+            <span className="font-mono text-sm font-bold text-ink-900">SEARCHOPS_v1.0</span>
+            <span className="text-bone-400">·</span>
+            <span className="font-sans text-sm text-bone-700">The Field Manual Design System</span>
           </div>
-          <div>
+          <span className="font-sans text-sm text-bone-500">
             Dual-Audience Precision CI/CD Instrument
-          </div>
+          </span>
         </div>
       </footer>
+
     </div>
   );
 }

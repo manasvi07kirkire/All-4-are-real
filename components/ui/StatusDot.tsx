@@ -42,21 +42,21 @@ export const StatusDot: React.FC<StatusDotProps> = ({
   }
 
   const sizeClasses = {
-    sm: "text-[10px] px-1.5 py-0.5 gap-1",
-    md: "text-[11px] px-2 py-0.5 gap-1.5",
-    lg: "text-xs px-2.5 py-1 gap-2",
+    sm: "text-xs px-2 py-0.5 gap-1.5 font-bold",
+    md: "text-xs px-2.5 py-1 gap-1.5 font-bold",
+    lg: "text-sm px-3 py-1 gap-2 font-bold",
   }[size];
 
   return (
     <span
       className={clsx(
-        "inline-flex items-center font-mono font-medium uppercase tracking-wider rounded-sm border",
+        "inline-flex items-center font-mono uppercase tracking-wider rounded-sm border",
         colorClasses,
         sizeClasses,
         className
       )}
     >
-      <span className="text-[9px] leading-none" aria-hidden="true">
+      <span className="text-xs leading-none" aria-hidden="true">
         {symbol}
       </span>
       <span>{textLabel}</span>

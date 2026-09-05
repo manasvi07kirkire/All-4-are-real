@@ -9,6 +9,14 @@ const config: Config = {
   ],
   darkMode: "class",
   theme: {
+    screens: {
+      xs: "375px",
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
+    },
     extend: {
       colors: {
         bone: {
@@ -58,9 +66,25 @@ const config: Config = {
       },
       fontFamily: {
         display: ["'JetBrains Mono'", "monospace"],
-        sans: ["'Hanken Grotesk'", "sans-serif"],
-        body: ["'Hanken Grotesk'", "sans-serif"],
+        sans: ["'Inter'", "'Hanken Grotesk'", "sans-serif"],
+        body: ["'Inter'", "'Hanken Grotesk'", "sans-serif"],
         mono: ["'JetBrains Mono'", "monospace"],
+        grotesk: ["'Hanken Grotesk'", "sans-serif"],
+      },
+      fontSize: {
+        /* Enforce readability floor */
+        "2xs": ["0.6875rem", { lineHeight: "1rem" }],      /* 11px - eyebrows only */
+        xs: ["0.75rem", { lineHeight: "1.125rem" }],  /* 12px - minimum labels */
+        sm: ["0.875rem", { lineHeight: "1.375rem" }],  /* 14px - body/descriptions */
+        base: ["1rem", { lineHeight: "1.6rem" }],    /* 16px - card headings */
+        lg: ["1.125rem", { lineHeight: "1.75rem" }],   /* 18px - section headings */
+        xl: ["1.25rem", { lineHeight: "1.875rem" }],  /* 20px - sub-titles */
+        "2xl": ["1.5rem", { lineHeight: "2rem" }],      /* 24px */
+        "3xl": ["1.875rem", { lineHeight: "2.375rem" }],  /* 30px */
+        "4xl": ["2.25rem", { lineHeight: "2.75rem" }],   /* 36px */
+        "5xl": ["3rem", { lineHeight: "3.5rem" }],    /* 48px - gauge scores */
+        "6xl": ["3.75rem", { lineHeight: "4.25rem" }],   /* 60px - hero gauge scores */
+        "7xl": ["4.5rem", { lineHeight: "5rem" }],      /* 72px - display metrics */
       },
       borderRadius: {
         DEFAULT: "2px",
@@ -68,12 +92,27 @@ const config: Config = {
         md: "4px",
         lg: "4px",
         xl: "8px",
+        "2xl": "12px",
       },
       boxShadow: {
         cta: "0 2px 12px rgba(194, 63, 16, 0.35)",
+        card: "0 1px 3px rgba(16, 14, 12, 0.08), 0 1px 2px rgba(16, 14, 12, 0.04)",
+        "card-hover": "0 4px 12px rgba(16, 14, 12, 0.12)",
+      },
+      spacing: {
+        "18": "4.5rem",
+        "22": "5.5rem",
+        "26": "6.5rem",
+      },
+      minHeight: {
+        touch: "44px", /* iOS HIG minimum tap target */
+      },
+      transitionTimingFunction: {
+        "bounce-in": "cubic-bezier(0.34, 1.56, 0.64, 1)",
       },
     },
   },
   plugins: [],
 };
+
 export default config;

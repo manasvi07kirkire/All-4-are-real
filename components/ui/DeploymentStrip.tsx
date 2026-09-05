@@ -36,7 +36,7 @@ export const DeploymentStrip: React.FC<DeploymentStripProps> = ({
       {/* Label */}
       <div className="flex items-center gap-2 shrink-0">
         <GitBranch className="w-4 h-4 text-steel-400" />
-        <span className="font-mono text-xs font-semibold text-bone-500 uppercase tracking-widest">
+        <span className="font-mono text-xs sm:text-sm font-bold text-bone-300 uppercase tracking-widest">
           DEPLOYMENT DIFF STRIP:
         </span>
       </div>
@@ -52,24 +52,24 @@ export const DeploymentStrip: React.FC<DeploymentStripProps> = ({
             return (
               <React.Fragment key={d.id}>
                 {index > 0 && (
-                  <ArrowRight className="w-3.5 h-3.5 text-line-600 shrink-0" />
+                  <ArrowRight className="w-4 h-4 text-line-600 shrink-0" />
                 )}
                 <button
                   onClick={() => onSelectDeployment(d.deployNumber)}
                   className={clsx(
-                    "flex items-center gap-2 sm:gap-2.5 px-3 py-1.5 rounded-sm border transition-all text-left group shrink-0",
+                    "flex items-center gap-2.5 sm:gap-3 px-3.5 py-2 min-h-[44px] rounded-sm border transition-all text-left group shrink-0",
                     isActive
                       ? isRegression
-                        ? "bg-ink-750 border-l-2 border-l-ember-400 border-ink-700"
-                        : "bg-ink-750 border-l-2 border-l-patina-400 border-ink-700"
+                        ? "bg-ink-750 border-l-4 border-l-ember-400 border-ink-700 shadow-sm"
+                        : "bg-ink-750 border-l-4 border-l-patina-400 border-ink-700 shadow-sm"
                       : "bg-ink-850 border-ink-700 hover:border-line-500 hover:bg-ink-750"
                   )}
                 >
                   {/* Deploy # and Status */}
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-2">
                     <span
                       className={clsx(
-                        "font-mono text-xs font-bold tabular-nums",
+                        "font-mono text-sm font-black tabular-nums",
                         isActive ? "text-bone-100" : "text-bone-300"
                       )}
                     >
@@ -79,14 +79,14 @@ export const DeploymentStrip: React.FC<DeploymentStripProps> = ({
                   </div>
 
                   {/* Score */}
-                  <div className="flex items-center gap-1 pl-1.5 border-l border-ink-700">
-                    <span className="font-mono text-xs font-bold text-bone-100 tabular-nums">
+                  <div className="flex items-center gap-1.5 pl-2 border-l border-ink-700">
+                    <span className="font-mono text-sm font-black text-bone-100 tabular-nums">
                       {d.searchHealth}
                     </span>
                     {hasDelta && (
                       <span
                         className={clsx(
-                          "font-mono text-[10.5px] font-semibold tabular-nums",
+                          "font-mono text-xs font-bold tabular-nums",
                           d.deltaSearch! < 0 ? "text-ember-400" : "text-patina-400"
                         )}
                       >
@@ -96,8 +96,8 @@ export const DeploymentStrip: React.FC<DeploymentStripProps> = ({
                   </div>
 
                   {/* Commit info preview on wider screens */}
-                  <div className="hidden lg:flex flex-col text-[11px] font-mono text-bone-500 pl-1.5 border-l border-ink-700">
-                    <span className="truncate max-w-[140px] text-bone-300 font-sans">{d.commitMsg}</span>
+                  <div className="hidden lg:flex flex-col text-xs font-mono text-bone-400 pl-2 border-l border-ink-700">
+                    <span className="truncate max-w-[150px] text-bone-200 font-sans font-medium">{d.commitMsg}</span>
                     <span>{d.sha} · {d.author}</span>
                   </div>
                 </button>

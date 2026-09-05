@@ -18,17 +18,17 @@ export const TierBadge: React.FC<TierBadgeProps> = ({
   const classification = findingType
     ? classifyRemediationTier(findingType)
     : {
-        tier,
-        label:
-          tier === "TIER_A" ? "AUTO-FIX" : tier === "TIER_B" ? "DRAFT PR" : "APPROVAL ONLY",
-        colorToken: tier === "TIER_A" ? "patina" : tier === "TIER_B" ? "marigold" : "ember",
-        description:
-          tier === "TIER_A"
-            ? "Declarative template-safe fix"
-            : tier === "TIER_B"
+      tier,
+      label:
+        tier === "TIER_A" ? "AUTO-FIX" : tier === "TIER_B" ? "DRAFT PR" : "APPROVAL ONLY",
+      colorToken: tier === "TIER_A" ? "patina" : tier === "TIER_B" ? "marigold" : "ember",
+      description:
+        tier === "TIER_A"
+          ? "Declarative template-safe fix"
+          : tier === "TIER_B"
             ? "Structural draft PR"
             : "Requires manual human approval",
-      };
+    };
 
   const isPatina = classification.colorToken === "patina";
   const isMarigold = classification.colorToken === "marigold";
@@ -39,18 +39,18 @@ export const TierBadge: React.FC<TierBadgeProps> = ({
   const colorStyles = isPatina
     ? "text-patina-400 bg-patina-tint border-patina-400/40"
     : isMarigold
-    ? "text-marigold-400 bg-marigold-tint border-marigold-400/40"
-    : "text-ember-400 bg-ember-tint border-ember-400/40";
+      ? "text-marigold-400 bg-marigold-tint border-marigold-400/40"
+      : "text-ember-400 bg-ember-tint border-ember-400/40";
 
   return (
     <div className={clsx("inline-flex flex-col items-start gap-1", className)}>
       <span
         className={clsx(
-          "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-sm border font-mono text-[11px] font-bold uppercase tracking-wider",
+          "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm border font-mono text-xs font-bold uppercase tracking-wider",
           colorStyles
         )}
       >
-        <span className="text-[9px] leading-none" aria-hidden="true">
+        <span className="text-xs leading-none" aria-hidden="true">
           {symbol}
         </span>
         <span>{classification.label}</span>

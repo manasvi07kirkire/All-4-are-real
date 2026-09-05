@@ -127,32 +127,32 @@ export default function SeoAdvisorPage() {
 
         <main className="flex-1 p-4 sm:p-6 md:p-8 flex flex-col gap-6 max-w-[1300px]">
           {/* Header */}
-          <div className="flex flex-col gap-1 border-b border-bone-300 pb-4">
+          <div className="flex flex-col gap-1.5 border-b border-bone-300 pb-4">
             <div className="flex items-center gap-2">
-              <span className="font-mono text-xs font-bold text-steel-400 uppercase tracking-widest">
+              <span className="font-mono text-xs sm:text-sm font-bold text-steel-400 uppercase tracking-widest">
                 PRE-DEPLOY
               </span>
-              <span className="font-mono text-xs text-bone-700">·</span>
-              <span className="font-mono text-xs font-semibold text-bone-700 truncate">{pageUrl}</span>
+              <span className="font-mono text-sm text-bone-700">·</span>
+              <span className="font-mono text-xs sm:text-sm font-semibold text-bone-700 truncate">{pageUrl}</span>
             </div>
-            <h1 className="font-mono font-bold text-2xl sm:text-3xl text-ink-900 tracking-tight uppercase">
+            <h1 className="font-mono font-black text-2xl sm:text-3xl md:text-4xl text-ink-900 tracking-tight uppercase">
               Optimize Before You Ship
             </h1>
           </div>
 
           {/* Scan input */}
-          <div className="flex flex-col gap-3 bg-bone-100 border border-bone-300 rounded-sm p-4">
+          <div className="flex flex-col gap-4 bg-bone-100 border border-bone-300 rounded-sm p-4 sm:p-5">
             <div className="flex flex-col gap-1.5">
-              <label className="font-mono text-[10.5px] font-bold text-bone-700 uppercase tracking-wider">
+              <label className="font-mono text-xs sm:text-sm font-bold text-bone-700 uppercase tracking-wider">
                 Page URL
               </label>
               <input
                 value={pageUrl}
                 onChange={(e) => setPageUrl(e.target.value)}
-                className="font-mono text-sm px-3 py-2 rounded-sm border border-bone-300 bg-bone-100 text-ink-900 focus:outline-none focus:border-steel-400"
+                className="font-mono text-sm px-3.5 py-2.5 rounded-sm border border-bone-300 bg-bone-100 text-ink-900 focus:outline-none focus:border-steel-400"
                 placeholder="https://example.com/product/page"
               />
-              <div className="flex flex-wrap gap-1.5 mt-1">
+              <div className="flex flex-wrap gap-1.5 mt-1.5">
                 {CATALOG_PAGES.map((p) => (
                   <button
                     key={p.url}
@@ -160,7 +160,7 @@ export default function SeoAdvisorPage() {
                       setPageUrl(p.url);
                       setKeywordInput(p.keywords);
                     }}
-                    className="font-mono text-[10.5px] px-2 py-1 rounded-sm border border-bone-300 bg-bone-300/30 text-bone-700 hover:border-steel-400 hover:text-ink-900 transition-all uppercase tracking-wide"
+                    className="font-mono text-xs px-2.5 py-1 min-h-[32px] rounded-sm border border-bone-300 bg-bone-300/30 text-bone-700 hover:border-steel-400 hover:text-ink-900 transition-all uppercase tracking-wide font-medium"
                   >
                     {p.label}
                   </button>
@@ -169,16 +169,16 @@ export default function SeoAdvisorPage() {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="font-mono text-[10.5px] font-bold text-bone-700 uppercase tracking-wider">
+              <label className="font-mono text-xs sm:text-sm font-bold text-bone-700 uppercase tracking-wider">
                 Target keywords
               </label>
               <input
                 value={keywordInput}
                 onChange={(e) => setKeywordInput(e.target.value)}
-                className="font-mono text-sm px-3 py-2 rounded-sm border border-bone-300 bg-bone-100 text-ink-900 focus:outline-none focus:border-steel-400"
+                className="font-mono text-sm px-3.5 py-2.5 rounded-sm border border-bone-300 bg-bone-100 text-ink-900 focus:outline-none focus:border-steel-400"
                 placeholder="non-contact tachometer, 50000 RPM digital tachometer"
               />
-              <div className="flex flex-wrap gap-1.5 mt-1">
+              <div className="flex flex-wrap gap-1.5 mt-1.5">
                 {targetKeywords.map((k) => (
                   <KeywordChip key={k} label={k} variant="neutral" />
                 ))}
@@ -188,21 +188,21 @@ export default function SeoAdvisorPage() {
             <button
               onClick={handleScan}
               disabled={isScanning || targetKeywords.length === 0 || !pageUrl}
-              className="self-start flex items-center gap-2 px-4 py-2 bg-steel-400 hover:opacity-90 text-bone-100 rounded-sm font-mono text-xs font-bold uppercase tracking-wider transition-all disabled:opacity-50"
+              className="self-start flex items-center gap-2 px-5 py-2.5 min-h-[40px] bg-steel-400 hover:opacity-90 text-bone-100 rounded-sm font-mono text-xs sm:text-sm font-bold uppercase tracking-wider transition-all disabled:opacity-50"
             >
-              {isScanning ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
+              {isScanning ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
               <span>{isScanning ? "Scanning..." : "Re-scan"}</span>
             </button>
           </div>
 
           {error && (
-            <div className="bg-ember-tint border border-ember-600/40 rounded-sm p-3 font-mono text-xs text-ember-600">
+            <div className="bg-ember-tint border border-ember-600/40 rounded-sm p-3.5 font-mono text-sm text-ember-600">
               {error}
             </div>
           )}
 
           {prResult && (
-            <div className="bg-patina-tint border border-patina-400/40 rounded-sm p-3 font-mono text-xs text-patina-600 flex items-center gap-2">
+            <div className="bg-patina-tint border border-patina-400/40 rounded-sm p-3.5 font-mono text-sm text-patina-600 flex items-center gap-2">
               <span>◆</span>
               <span>
                 PR opened:{" "}
@@ -217,12 +217,12 @@ export default function SeoAdvisorPage() {
           {/* Suggestions */}
           {suggestions.length > 0 && (
             <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between gap-2 border-b border-bone-300 pb-2">
-                <span className="font-mono text-xs font-bold text-ink-900 uppercase tracking-wider flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-steel-400" />
+              <div className="flex items-center justify-between gap-2 border-b border-bone-300 pb-2.5 flex-wrap">
+                <span className="font-mono text-sm font-bold text-ink-900 uppercase tracking-wider flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-steel-400" />
                   Suggestions ({suggestions.length})
                 </span>
-                <span className="font-mono text-[10.5px] text-bone-700 font-semibold">
+                <span className="font-mono text-xs sm:text-sm text-bone-700 font-medium">
                   Grounded in extracted page content · Groq/OpenRouter reasoning
                 </span>
               </div>
