@@ -126,7 +126,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0e1a] text-[#f0f6fc] flex flex-col font-sans relative">
+    <div className="min-h-screen bg-bone-100 text-ink-900 flex flex-col font-sans relative">
       {/* Field Manual Top Navigation */}
       <FieldManualNav
         currentDeployNumber={activeDeployNumber}
